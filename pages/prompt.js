@@ -8,7 +8,7 @@ import { authOptions } from './api/auth/[...nextauth]';
 import Title from '../lib/title/title';
 import HighlightBox from '../lib/highlight-box/highlight-box';
 import Root from '../lib/root/root';
-import { getGeneration } from '../utils/prompt-helpers';
+import { getAdviceGeneration } from '../utils/client/prompt-helpers';
 
 function Prompt() {
   const [userInput, setUserInput] = useState('');
@@ -29,7 +29,7 @@ function Prompt() {
 
   const callGenerateEndpoint = async () => {
     setIsGenerating(true);
-    const text = await getGeneration(userInput);
+    const text = await getAdviceGeneration(userInput);
     setApiOutput(text);
     setIsGenerating(false);
   };
