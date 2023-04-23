@@ -139,8 +139,18 @@ function AudioCall() {
                {
                 isSettingsOpen ? (
                 <div style={{ position: 'absolute', left: '0', top: '0', padding: '20px' }}>
+                    <div style={{ maxWidth: '200px', maxHeight: '100px' }}>
+                      <Button onClickAction={() => setIsSettingsOpen(true)}>settings</Button>
+                    </div>
                     <div>
-                      <label>jen&apos;s voice: </label>
+                      tips:
+                      <ul>
+                        <li>hold spacebar to speak</li>
+                        <li>click enter to clear ur speech</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <label><strong>jen&apos;s voice: </strong></label>
                       <select
                         value={voiceIndex || ''}
                         onChange={(event) => {
@@ -159,7 +169,7 @@ function AudioCall() {
                       </select>
                     </div>
                     <div>
-                      <label>jen&apos;s rate: </label>
+                      <label><strong>jen&apos;s rate: </strong></label>
                       <input
                         type="range"
                         min="0.5"
@@ -174,7 +184,7 @@ function AudioCall() {
                       />
                     </div>
                     <div>
-                      <label>jen&apos;s pitch: </label>
+                      <label><strong>jen&apos;s pitch: </strong></label>
                       <input
                         type="range"
                         min="0"
@@ -187,9 +197,6 @@ function AudioCall() {
                         }}
                       />
                     </div>
-                    <div style={{ maxWidth: '200px', maxHeight: '100px' }}>
-                      <Button onClickAction={() => setIsSettingsOpen(false)}>close</Button>
-                    </div>
                   </div>
                 )
                 : (
@@ -198,7 +205,7 @@ function AudioCall() {
                     </div>
                   )
               }
-                <Title title="transcript" subtitle="click the spacebar to start speaking!" />
+                <Title title="transcript" subtitle="hold the spacebar to start speaking!" />
                 <div style={{ maxWidth: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', marginTop: '-10px'}}>
                   { chat.length
                     ? chat.map((el) => (
