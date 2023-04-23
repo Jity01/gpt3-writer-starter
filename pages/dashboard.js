@@ -40,6 +40,7 @@ function Dashboard() {
           <Category>
             <h3>scoreboard</h3>
             <p>see ur notes on jen&apos;s advice</p>
+            <Link href="/scoreboard"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
         </CategoryGrid>
       </div>
