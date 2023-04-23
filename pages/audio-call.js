@@ -139,8 +139,8 @@ function AudioCall() {
                {
                 isSettingsOpen ? (
                 <div style={{ position: 'absolute', left: '0', top: '0', padding: '20px' }}>
-                    <div style={{ maxWidth: '200px', maxHeight: '100px' }}>
-                      <Button onClickAction={() => setIsSettingsOpen(true)}>settings</Button>
+                    <div style={{ position: 'absolute', left: '0', top: '-12px', maxWidth: '200px' }}>
+                      <Button onClickAction={() => setIsSettingsOpen(false)}>settings</Button>
                     </div>
                     <div>
                       tips:
@@ -161,7 +161,7 @@ function AudioCall() {
                           maxWidth: '200px',
                         }}>
                         <option value="">default</option>
-                        {voices.map((option, index) => (
+                        {voices.filter(option => option.name.includes('en')).map((option, index) => (
                           <option key={option.voiceURI} value={index}>
                             {`${option.lang.toLowerCase()} - ${option.name.toLowerCase()}`}
                           </option>
