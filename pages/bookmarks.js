@@ -1,8 +1,8 @@
 function Bookmarks() {
     return (
-        <div>
+        <div style={{ maxWidth: '400px'}}>
             <br />
-            <h1>a documentation of ur sessions w jen! coming soon :)</h1>
+            <h3>a documentation of ur sessions w jen! coming soon :)</h3>
         </div>
     );
 }
