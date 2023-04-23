@@ -161,7 +161,7 @@ function AudioCall() {
                           maxWidth: '200px',
                         }}>
                         <option value="">default</option>
-                        {voices.filter(option => option.name.includes('en-US')).map((option, index) => (
+                        {voices.map((option, index) => (
                           <option key={option.voiceURI} value={index}>
                             {`${option.lang.toLowerCase()} - ${option.name.toLowerCase()}`}
                           </option>
