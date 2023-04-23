@@ -35,11 +35,18 @@ function AudioCall() {
       cancel,
       speaking,
       supported,
-      voices
+      voices,
     } = useSpeechSynthesis();
-  const englishVoices = voices.filter(voice => voice.lang.includes('en'));
+  const listenContinuously = () => {
+    if (speaking) cancel();
+    SpeechRecognition.startListening({ continuous: true });
+  }
+  const [voiceIndex, setVoiceIndex] = useState(null);
+  const [rate, setRate] = useState(1);
+  const [pitch, setPitch] = useState(1);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  const listenContinuously = () => SpeechRecognition.startListening({ continuous: true });
+  const voice = voices[voiceIndex] || null;
 
   const stopListening = async () => {
     SpeechRecognition.stopListening();
@@ -51,7 +58,7 @@ function AudioCall() {
     const prompt = createFullChatContext(chat, transcript);
     const responseText = await getConversationGeneration(prompt);
     setIsGenerating(false);
-    speak({ text: responseText, voice: englishVoices[0] });
+    speak({ text: responseText, voice, rate, pitch });
     setChat([...chat, { user: transcript, JEN: responseText }]);
     resetTranscript();
   };
@@ -120,25 +127,86 @@ function AudioCall() {
   }
 
   return (
-    <Root style={{ textAlgin: "left" }}>
+    <Root>
       {
         conversationStatus === 'open'
           ? ( <>
-                <Title title="audio transcript" subtitle="click the spacebar to start speaking!" />
-                <br />
-                {
-                  chat.length
-                  ? chat.map((el) => (
-                      <>
-                        <p><strong>you:</strong> { el.user }</p>
-                        <p><strong>jen:</strong> { el.JEN }</p>             
-                      </>
-                    ))
-                    : null
-                }
-                { listening ? <p>you: { transcript }</p> : null }
-                { isGenerating ? <p>hmm...interesting - let me think about it.</p> : null }
-                <div style={{ width: '200px'}}><Button onClickAction={endCall}>end call</Button></div>
+               {
+                isSettingsOpen ? (
+                <div style={{ position: 'absolute', left: '0', top: '0', padding: '20px' }}>
+                    <div>
+                      <label>jen&apos;s voice: </label>
+                      <select
+                        value={voiceIndex || ''}
+                        onChange={(event) => {
+                          setVoiceIndex(event.target.value);
+                        }}
+                        style={{
+                          fontSize: '14px',
+                          maxWidth: '200px',
+                        }}>
+                        <option value="">default</option>
+                        {voices.map((option, index) => (
+                          <option key={option.voiceURI} value={index}>
+                            {`${option.lang.toLowerCase()} - ${option.name.toLowerCase()}`}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label>jen&apos;s rate: </label>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="2"
+                        defaultValue="1"
+                        step="0.1"
+                        id="rate"
+                        onChange={(event) => {
+                          setRate(event.target.value);
+                        }}
+                        style={{ height: '20px' }}
+                      />
+                    </div>
+                    <div>
+                      <label>jen&apos;s pitch: </label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="2"
+                        defaultValue="1"
+                        step="0.1"
+                        id="pitch"
+                        onChange={(event) => {
+                          setPitch(event.target.value);
+                        }}
+                      />
+                    </div>
+                    <div style={{ maxWidth: '200px', maxHeight: '100px' }}>
+                      <Button onClickAction={() => setIsSettingsOpen(false)}>close</Button>
+                    </div>
+                  </div>
+                )
+                : (
+                    <div style={{ position: 'absolute', left: '0', top: '-12px', maxWidth: '200px' }}>
+                      <Button onClickAction={() => setIsSettingsOpen(true)}>settings</Button>
+                    </div>
+                  )
+              }
+                <Title title="transcript" subtitle="click the spacebar to start speaking!" />
+                <div style={{ maxWidth: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', marginTop: '-10px'}}>
+                  { chat.length
+                    ? chat.map((el) => (
+                        <>
+                          <p><strong>you:</strong> { el.user }</p>
+                          <p><strong>jen:</strong> { el.JEN }</p>             
+                        </>
+                      ))
+                      : null }
+                  { listening ? <p>you: { transcript }</p> : null }
+                  { isGenerating ? <p>hmm...interesting - let me think about it.</p> : null }
+                  <div style={{ width: '200px' }}><Button onClickAction={endCall}>end call</Button></div>
+                </div> 
               </> )
           : conversationStatus === 'closed'
             ? ( <Layout>
