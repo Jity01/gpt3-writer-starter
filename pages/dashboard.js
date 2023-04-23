@@ -19,7 +19,7 @@ function Dashboard() {
         <title>dashboard :)</title>
       </Head>
       <div style={{ maxWidth: '900px', marginLeft: 'auto', marginRight: 'auto' }}>
-        {/* <Title title="ur dashboard" subtitle="" /> */}
+        {/* <Title title="ur dashboard" subtitle="" />  */}
         <Header username={`${session.user.name.toLowerCase()}`} page="dashboard" />
         <CategoryGrid>
           <Category>
@@ -40,7 +40,6 @@ function Dashboard() {
           <Category>
             <h3>scoreboard</h3>
             <p>see ur notes on jen&apos;s advice</p>
-            <Link href="/scoreboard"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
         </CategoryGrid>
       </div>

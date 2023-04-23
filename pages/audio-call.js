@@ -8,6 +8,10 @@ import Layout from '../lib/layout/layout';
 import { createSpeechlySpeechRecognition } from '@speechly/speech-recognition-polyfill';
 import Title from '../lib/title/title';
 import Root from '../lib/root/root';
+import Link from 'next/link';
+import Head from 'next/head';
+import { getServerSession } from 'next-auth';
+import { authOptions } from './api/auth/[...nextauth]';
 
 const appId = '703efb7d-6930-4a9e-b71c-2282c3d7d145';
 const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
@@ -126,6 +130,9 @@ function AudioCall() {
 
   return (
     <Root>
+      <Head>
+        <title>audio call</title>
+      </Head>
       {
         conversationStatus === 'open'
           ? ( <>
@@ -210,7 +217,11 @@ function AudioCall() {
             ? ( <Layout>
                   <h2>thanks for today&apos;s great session :)</h2>
                   <p>you can see this session again in ur bookmarks.</p>
-                  <Button onClickAction={() => {}}>back to home</Button>
+                  <Link href="/dashboard">
+                    <div style={{ width: '400px'}}>
+                      <Button onClickAction={() => {}}>back to home</Button>
+                    </div>
+                  </Link>
                   <Button onClickAction={() => setConversationStatus('open')}>call again!</Button>
                 </Layout> )
             : ( <Layout>
@@ -221,6 +232,15 @@ function AudioCall() {
         }
     </Root>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { req, res } = context;
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    return { redirect: { destination: '/' } };
+  }
+  return { props: { session } };
 }
 
 export default AudioCall;

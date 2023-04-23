@@ -10,7 +10,7 @@ import Button from '../lib/button/button';
 function SignIn({ providers }) {
   return (
     <Layout>
-      { Object.values(providers).map((provider) => (
+     { Object.values(providers).map((provider) => (
         <div key={provider.name}>
           <Button
             type="button"

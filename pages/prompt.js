@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './api/auth/[...nextauth]';
 import Title from '../lib/title/title';
-import HighlightBox from '../lib/highlight-box/highlight-box';
 import Root from '../lib/root/root';
 import { getAdviceGeneration } from '../utils/client/prompt-helpers';
 import { useSpeechSynthesis } from 'react-speech-kit';
@@ -38,7 +37,7 @@ function Prompt() {
   return (
     <Root>
       <Head>
-        <title>dashboard</title>
+        <title>textin jen :)</title>
       </Head>
       <Title
         title="reinforce ur shit."
@@ -46,7 +45,7 @@ function Prompt() {
       />
       <div className="prompt-container">
         <textarea
-          placeholder="i feel like my work is not perfect; it's gotten so hard for me to keep creating."
+          placeholder="i feel like my work is not perfect. it's gotten so hard for me to keep creating."
           className="prompt-box"
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
@@ -75,7 +74,6 @@ function Prompt() {
             </div>
           </div>
         ) }
-        <HighlightBox fullPromptText={apiOutput} />
       </div>
     </Root>
   );
