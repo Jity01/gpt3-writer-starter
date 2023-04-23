@@ -12,7 +12,7 @@ import Footer from '../lib/footer/footer';
 // import Root from '../lib/root/root';
 
 function Dashboard() {
-  // const { data: session } = useSession();
+  const { data: session } = useSession();
   return (
     <>
       <Head>
@@ -20,22 +20,17 @@ function Dashboard() {
       </Head>
       <div style={{ maxWidth: '900px', marginLeft: 'auto', marginRight: 'auto' }}>
         {/* <Title title="ur dashboard" subtitle="" /> */}
-        {/* <Header username={`${session.user.name.toLowerCase()}`} page="dashboard" /> */}
+        <Header username={`${session.user.name.toLowerCase()}`} page="dashboard" />
         <CategoryGrid>
           <Category>
             <h3>prompt</h3>
-            <p>go to a text convo w jen throughout the day</p>
+            <p>go to a text convo w jen</p>
             <Link href="/prompt"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
           <Category>
             <h3>audio call</h3>
-            <p>go on a audio call w jen and her friends!</p>
+            <p>go on a audio call w jen!</p>
             <Link href="/audio-call"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
-          </Category>
-          <Category>
-            <h3>scoreboard</h3>
-            <p>see how well jen&apos;s advice works out for ya</p>
-            <Link href="/scoreboard"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
           <Category>
             <h3>bookmarks</h3>
@@ -43,9 +38,9 @@ function Dashboard() {
             <Link href="/bookmarks"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
           <Category>
-            <h3>notes</h3>
-            <p>see ur highlights & notes</p>
-            <Link href="/notes"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
+            <h3>scoreboard</h3>
+            <p>see ur notes on jen&apos;s advice</p>
+            <Link href="/scoreboard"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
         </CategoryGrid>
       </div>
@@ -57,13 +52,13 @@ function Dashboard() {
   );
 }
 
-// export async function getServerSideProps(context) {
-//   const { req, res } = context;
-//   const session = await getServerSession(req, res, authOptions);
-//   if (!session) {
-//     return { redirect: { destination: '/' } };
-//   }
-//   return { props: { session } };
-// }
+export async function getServerSideProps(context) {
+  const { req, res } = context;
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    return { redirect: { destination: '/' } };
+  }
+  return { props: { session } };
+}
 
 export default Dashboard;

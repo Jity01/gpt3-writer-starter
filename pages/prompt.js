@@ -9,29 +9,30 @@ import Title from '../lib/title/title';
 import HighlightBox from '../lib/highlight-box/highlight-box';
 import Root from '../lib/root/root';
 import { getAdviceGeneration } from '../utils/client/prompt-helpers';
+import { useSpeechSynthesis } from 'react-speech-kit';
 
 function Prompt() {
   const [userInput, setUserInput] = useState('');
   const [apiOutput, setApiOutput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const {
+    speak,
+    cancel,
+    speaking,
+    supported,
+    voices,
+  } = useSpeechSynthesis();
 
   const playOutput = () => {
-    const msg = new SpeechSynthesisUtterance();
-    msg.text = apiOutput;
-    const allPossibleVoices = speechSynthesis.getVoices();
-    let targetVoice = allPossibleVoices[0];
-    for (let idx; idx < allPossibleVoices.length(); idx + 1) {
-      if (allPossibleVoices[idx].name === 'Boing') targetVoice = allPossibleVoices[idx];
-    }
-    msg.voice = targetVoice;
-    window.speechSynthesis.speak(msg);
+    if (supported) speak({ text: apiOutput, voice: voices[0] });
   };
 
   const callGenerateEndpoint = async () => {
+    if (speaking) cancel();
     setIsGenerating(true);
     const text = await getAdviceGeneration(userInput);
-    setApiOutput(text);
     setIsGenerating(false);
+    setApiOutput(text);
   };
 
   return (

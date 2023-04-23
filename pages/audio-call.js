@@ -13,9 +13,7 @@ const appId = '703efb7d-6930-4a9e-b71c-2282c3d7d145';
 const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
 SpeechRecognition.applyPolyfill(SpeechlySpeechRecognition);
 
-// todo: let user pick out the voice & the rate (peep their demo & use react-speech-kit)
 // todo: add a place where the user can input how they felt about the session (abstract textarea?)
-
 // todo: insert session into database
 
 function AudioCall() {
