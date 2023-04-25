@@ -1,7 +1,9 @@
-import { signIn } from 'next-auth/react';
+import { signIn, getProviders } from 'next-auth/react';
 import Head from 'next/head';
 import Layout from '../lib/layout/layout';
 import Button from '../lib/button/button';
+import { getServerSession } from 'next-auth';
+import { authOptions } from './api/auth/[...nextauth]';
 
 function Home() {
   return (
@@ -17,6 +19,20 @@ function Home() {
       </Layout>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { req, res } = context;
+  const session = await getServerSession(req, res, authOptions);
+  if (session) {
+    return { redirect: { destination: '/dashboard' } };
+  }
+  const providers = await getProviders();
+  return {
+    props: {
+      providers: providers || [],
+    },
+  };
 }
 
 export default Home;

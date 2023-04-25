@@ -42,6 +42,11 @@ function Dashboard() {
             <p>see ur notes on jen&apos;s advice</p>
             <Link href="/scoreboard"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
+          <Category>
+            <h3>emapthy zone ;)</h3>
+            <p>expressing ur self but it&apos;s on steroids</p>
+            <Link href="/empathy-zone"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
+          </Category>
         </CategoryGrid>
       </div>
       <br />
