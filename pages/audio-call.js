@@ -39,8 +39,8 @@ function AudioCall() {
       supported,
       voices,
     } = useSpeechSynthesis();
-  const listenContinuously = () => {
-    if (speaking) cancel();
+  const listenContinuously = async () => {
+    if (speaking) await cancel();
     SpeechRecognition.startListening({ continuous: true });
   }
   const [voiceIndex, setVoiceIndex] = useState(null);
@@ -70,7 +70,7 @@ function AudioCall() {
     setChat([]);
     resetTranscript();
     SpeechRecognition.stopListening();
-    cancel();
+    await cancel();
     // const sessionChat = createFullChatContext(chat, transcript);
     // await insertAudioSessionIntoDB({sessionChat});
   };

@@ -41,7 +41,7 @@ function Prompt() {
       </Head>
       <Title
         title="reinforce ur shit."
-        subtitle="it's so hard to remember ur principles. let JEN help with that."
+        subtitle="it's so nice when you remember your principles, isn't it?"
       />
       <div className="prompt-container">
         <textarea
