@@ -21,6 +21,11 @@ export const getAdviceGeneration = async (chatPrompt) => {
   return responseText;
 };
 
+export const getEmpathyGeneration = async (chatPrompt) => {
+  const responseText = await getGeneration(chatPrompt, 'generate-empathy');
+  return responseText;
+};
+
 const addCurrentLine = (chatContext, currentUserLine) => {
   const fullChatContext = `${chatContext}\nme: ${currentUserLine}\nyou: `;
   return fullChatContext;

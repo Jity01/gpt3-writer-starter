@@ -25,13 +25,13 @@ body {
     border-bottom-width: 1px;
     border-color: rgba(255, 255, 255, 0.1);
     box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.1);
+    background-color: #a3f7f4;
     border-left-width: 1px;
     border-right-width: 1px;
     border-style: solid;
     border-top-width: 1px;
     place-content: flex-start;
     align-items: flex-start;
-    background-color: #a3f7f4;
     border-radius: 16px;
     display: flex;
     flex: 0 0 auto;
@@ -47,7 +47,7 @@ body {
     overflow: auto;
     outline: none;
     resize: none;
-    font-size: 16px;
+    font-size: 1rem;
     font-style: normal;
     letter-spacing: 0px;
     line-height: 1.6em;
@@ -239,6 +239,43 @@ textarea {
 ::-webkit-scrollbar {
     background-color: #A0E7E5;
     width: 5px;
+}
+
+.parallelogram {
+    width: 300px;
+    min-height: 150px;
+    transform: skew(10deg);
+    background: #FFAEBC;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 5px solid #FBE7C6;
+    border-radius: 20px;
+    padding: 3px;
+}
+
+.emapthy-zone-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 70px;
+}
+
+.empathy-zone-textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 300px;
+    height: 150px;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 1rem;
+    box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.1);
+    background-color: #a3f7f4;
+}
+
+.empathy-zone-textarea:focus {
+    border-color:hsl(0, 0%, 20%);
 }
 
 ::-webkit-scrollbar-thumb {

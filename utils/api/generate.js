@@ -28,8 +28,5 @@ export const generate = async (promptPrefix, conversation) => {
     max_tokens: 500,
   });
   const basePromptOutput = baseCompletion.data.choices.pop();
-  // todo: remove these logs
-  console.log("OPENAI API PROMPT:", `${promptPrefix}${conversation}`);
-  console.log("OPENAI API RESPONSE:", basePromptOutput.text);
   return basePromptOutput;
 };

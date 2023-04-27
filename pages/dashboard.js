@@ -19,7 +19,7 @@ function Dashboard() {
         <title>dashboard :)</title>
       </Head>
       <div style={{ maxWidth: '900px', marginLeft: 'auto', marginRight: 'auto' }}>
-        {/* <Title title="ur dashboard" subtitle="" />  */}
+        <Title title="ur dashboard" subtitle="" /> 
         <Header username={`${session.user.name.toLowerCase()}`} page="dashboard" />
         <CategoryGrid>
           <Category>
@@ -44,7 +44,7 @@ function Dashboard() {
           </Category>
           <Category>
             <h3>emapthy zone ;)</h3>
-            <p>expressing ur self but it&apos;s on steroids</p>
+            <p>trying to better understand urself? want empathy?</p>
             <Link href="/empathy-zone"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
         </CategoryGrid>
