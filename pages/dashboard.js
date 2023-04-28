@@ -21,6 +21,11 @@ function Dashboard() {
         <Header username={`${session.user.name.toLowerCase()}`} page="dashboard" />
         <CategoryGrid>
           <Category>
+            <h3>emapthy zone</h3>
+            <p>just want empathy?</p>
+            <Link href="/empathy-zone"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
+          </Category>
+          <Category>
             <h3>prompt</h3>
             <p>go to a text convo w jen</p>
             <Link href="/prompt"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
@@ -30,7 +35,7 @@ function Dashboard() {
             <p>go on a audio call w jen!</p>
             <Link href="/audio-call"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
-          <Category>
+          {/* <Category>
             <h3>bookmarks</h3>
             <p>see ur fav convos w jen :)</p>
             <Link href="/bookmarks"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
@@ -39,12 +44,7 @@ function Dashboard() {
             <h3>scoreboard</h3>
             <p>see ur notes on jen&apos;s advice</p>
             <Link href="/scoreboard"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
-          </Category>
-          <Category>
-            <h3>emapthy zone</h3>
-            <p>just want empathy?</p>
-            <Link href="/empathy-zone"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
-          </Category>
+          </Category> */}
         </CategoryGrid>
       </div>
       <br />
