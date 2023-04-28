@@ -8,7 +8,6 @@ import Header from '../lib/header/header';
 import Category from '../lib/category/category';
 import CategoryGrid from '../lib/category-grid/category-grid';
 import Footer from '../lib/footer/footer';
-// import Title from '../lib/title/title';
 // import Root from '../lib/root/root';
 
 function Dashboard() {
@@ -19,7 +18,6 @@ function Dashboard() {
         <title>dashboard :)</title>
       </Head>
       <div style={{ maxWidth: '900px', marginLeft: 'auto', marginRight: 'auto' }}>
-        <Title title="ur dashboard" subtitle="" /> 
         <Header username={`${session.user.name.toLowerCase()}`} page="dashboard" />
         <CategoryGrid>
           <Category>
@@ -43,8 +41,8 @@ function Dashboard() {
             <Link href="/scoreboard"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
           <Category>
-            <h3>emapthy zone ;)</h3>
-            <p>trying to better understand urself? want empathy?</p>
+            <h3>emapthy zone</h3>
+            <p>just want empathy?</p>
             <Link href="/empathy-zone"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
         </CategoryGrid>
