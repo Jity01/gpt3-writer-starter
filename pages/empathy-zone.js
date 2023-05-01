@@ -1,12 +1,13 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from './api/auth/[...nextauth]';
 import { getEmpathyGeneration, createFullChatContext } from '../utils/client/prompt-helpers';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Title from '../lib/title/title';
-import Button from '../lib/button/button';
-import Link from 'next/link';
 import Head from 'next/head';
 import Root from '../lib/root/root';
+import LogBox from '../lib/log-box/log-box';
+import GenerateButton from '../lib/generate-button/generate-button';
+import LogBoxOutput from '../lib/log-box/log-box-output';
 
 function EmpathyZone() {
   const [chat, setChat] = useState([]);
@@ -28,10 +29,6 @@ function EmpathyZone() {
     setChat([]);
   };
 
-  useEffect(() => {
-    console.log('here');
-  }, []);
-
   return (
     <Root>
       <Head>
@@ -41,31 +38,17 @@ function EmpathyZone() {
         title="emapthy zone 🫡"
         subtitle="write a sentence, get a paragraph."
       />
-      <div className="emapthy-zone-container">
-        <div className="parallelogram">
-          <textarea
-            className="empathy-zone-textarea"
-            placeholder="i feel paralyzed by my imperfections."
-            input={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            />
-        </div>
-        <div className="prompt-buttons" style={{ marginTop: "10px" }}>
-          <a
-            className={isGenerating ? 'generate-button loading' : 'generate-button'}
-            onClick={getResponse}
-          >
-            <div>
-              { isGenerating ? <span className="loader" /> : <p>JENerate</p> }
-            </div>
-          </a>
-        </div>
-        <div className="empathy-zone-output-container">
-          <h3 />
-          <div className="parallelogram">
-            <div className="empathy-zone-output-container">{apiOutput}</div>
-          </div>
-        </div>
+      <div>
+        <LogBox>
+            <textarea
+              className="empathy-zone-textarea"
+              placeholder="i feel paralyzed by my imperfections."
+              input={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              />
+        </LogBox>
+        <GenerateButton onClickAction={getResponse} isGenerating={isGenerating} />
+        <LogBoxOutput outputText={apiOutput} />
       </div>
     </Root>
   );

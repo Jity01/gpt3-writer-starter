@@ -66,22 +66,6 @@ textarea {
     border-color:hsl(0, 0%, 20%);
 }
 
-
-.prompt-buttons {
-    display: flex;
-    place-content: center;
-    align-items: center;
-    justify-content: flex-end;
-    flex: 0 0 auto;
-    flex-flow: row nowrap;
-    gap: 12px;
-    height: min-content;
-    overflow: hidden;
-    padding: 0px;
-    position: relative;
-    width: 100%;
-}
-
 .key-stroke {
     outline: none;
     display: flex;
@@ -113,25 +97,6 @@ textarea {
     color: rgba(255, 255, 255, 0.25)
 }
 
-.generate-button {
-    place-content: flex-start;
-    align-items: flex-start;
-    background-color: hsl(350, 100%, 84%);
-    border-radius: 100px;
-    display: flex;
-    flex: 0 0 auto;
-    flex-flow: column nowrap;
-    gap: 10px;
-    height: min-content;
-    overflow: hidden;
-    padding: 16px 24px;
-    position: relative;
-    text-decoration: none;
-    width: min-content;
-    will-change: transform;
-    cursor: pointer;
-}
-
 .generate {
     outline: none;
     display: flex;
@@ -144,11 +109,6 @@ textarea {
 .generate p {
     color: rgb(255, 255, 255);
     margin: 0;
-}
-
-.loading {
-    opacity: 0.7;
-    cursor: default;
 }
 
 .grow {
@@ -241,28 +201,6 @@ textarea {
     width: 5px;
 }
 
-.parallelogram {
-    width: 300px;
-    min-height: 150px;
-    background: #FFAEBC;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 5px solid #FBE7C6;
-    border-radius: 20px;
-    padding: 3px;
-}
-
-.emapthy-zone-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 3px solid #a3f7f4;
-    box-shadow: 0px 4px 4px 3px rgba(0, 0, 0, 0.1);
-    padding: 5px;
-}
-
 .empathy-zone-textarea {
     display: block;
     box-sizing: border-box;
@@ -272,10 +210,6 @@ textarea {
     padding: 10px;
     font-size: 1rem;
     background-color: #a3f7f4;
-}
-
-.empathy-zone-output-container {
-    padding: 6px;
 }
 
 .empathy-zone-textarea:focus {
@@ -324,10 +258,6 @@ textarea {
         display: none;
     }
 
-    .prompt-buttons {
-        justify-content: center;
-    }
-
     .prompt-container {
         max-width: 400px;
         width: 100%;
@@ -336,28 +266,6 @@ textarea {
     .prompt-box {
         width: 100%;
     }
-
-    .emapthy-zone-container {
-        width: 290px;
-    }
-
-    .parallelogram {
-        width: 270px;
-    }
-}
-
-
-
- /* Loading ring animation */
-.loader {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: inline-block;
-    border-top: 2px solid #FFF;
-    border-right: 2px solid transparent;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
 }
 
 @keyframes rotation {

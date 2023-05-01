@@ -9,6 +9,7 @@ import Title from '../lib/title/title';
 import Root from '../lib/root/root';
 import { getAdviceGeneration } from '../utils/client/prompt-helpers';
 import { useSpeechSynthesis } from 'react-speech-kit';
+import GenerateButton from '../lib/generate-button/generate-button';
 
 function Prompt() {
   const [userInput, setUserInput] = useState('');
@@ -50,17 +51,7 @@ function Prompt() {
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
         />
-        <div className="prompt-buttons">
-          <a
-            className={isGenerating ? 'generate-button loading' : 'generate-button'}
-            onClick={callGenerateEndpoint}
-          >
-            <div>
-              { isGenerating ? <span className="loader" /> : <p>JENerate</p> }
-            </div>
-          </a>
-        </div>
-
+        <GenerateButton onClickAction={callGenerateEndpoint} isGenerating={isGenerating} />
         { apiOutput && (
           <div className="output">
             <div className="output-header-container">

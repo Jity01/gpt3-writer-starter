@@ -8,10 +8,17 @@ import Header from '../lib/header/header';
 import Category from '../lib/category/category';
 import CategoryGrid from '../lib/category-grid/category-grid';
 import Footer from '../lib/footer/footer';
+import { useEffect } from 'react';
+import { getUserId } from '../utils/client/db-helpers';
 // import Root from '../lib/root/root';
 
 function Dashboard() {
   const { data: session } = useSession();
+  const names = session.user.name.split(" ");
+  const userId = getUserId(names[0], names[1], session.user.email);
+  useEffect(() => {
+    if (!userId) addUser(names[0], names[1], session.user.email);
+  }, []);
   return (
     <>
       <Head>
