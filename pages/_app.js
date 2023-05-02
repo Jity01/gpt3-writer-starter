@@ -9,6 +9,8 @@ import { useEffect } from 'react';
 import gtag from '../google-analytics/gtag';
 import './styles.css';
 
+// TODO: fix routing for google analytics (not working out for snalog for some reason)
+
 function App({ Component, pageProps: { session, ...pageProps } }) {
   const router = useRouter();
   // useEffect(() => {
