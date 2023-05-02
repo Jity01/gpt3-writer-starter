@@ -6,8 +6,8 @@ import Title from '../lib/title/title';
 import Head from 'next/head';
 import Root from '../lib/root/root';
 import LogBox from '../lib/log-box/log-box';
-import GenerateButton from '../lib/generate-button/generate-button';
 import LogBoxOutput from '../lib/log-box/log-box-output';
+import Button from '../lib/button/button';
 
 function EmpathyZone() {
   const [chat, setChat] = useState([]);
@@ -47,7 +47,7 @@ function EmpathyZone() {
               onChange={(e) => setUserInput(e.target.value)}
               />
         </LogBox>
-        <GenerateButton onClickAction={getResponse} isGenerating={isGenerating} />
+        <Button onClickAction={getResponse} isGenerating={isGenerating}>jenerate</Button>
         <LogBoxOutput outputText={apiOutput} />
       </div>
     </Root>

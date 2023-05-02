@@ -5,21 +5,20 @@
 
 .title {
     text-decoration: underline;
-    background-color: #B4F8C8;
-    border: 5px solid #FBE7C6;
-    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+    text-align: left;
     margin-top: 0;
     padding: 10px 20px;
 }
 
-@media screen and (max-width: 500px) {
-    .container {
+@media screen and (max-width: 425px) {
+    .title {
+        padding-left: 40px;
         text-align: left;
     }
+}
+
+@media screen and (max-width: 939px) {
     .title {
-        box-shadow: none;
-        padding-left: 40px;
-        background-color: inherit;
-        border: none;
+        text-align: center;
     }
 }

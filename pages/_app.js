@@ -11,15 +11,15 @@ import './styles.css';
 
 function App({ Component, pageProps: { session, ...pageProps } }) {
   const router = useRouter();
-  useEffect(() => {
-    const handleRouteChange = (url) => {
-      gtag.pageview(url);
-    };
-    router.events.on('routeChangeComplete', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  }, [router.events]);
+  // useEffect(() => {
+  //   const handleRouteChange = (url) => {
+  //     gtag.pageview(url);
+  //   };
+  //   router.events.on('routeChangeComplete', handleRouteChange);
+  //   return () => {
+  //     router.events.off('routeChangeComplete', handleRouteChange);
+  //   };
+  // }, [router.events]);
   return (
     <>
       <Script strategy='afterInteractive' src='https://www.googletagmanager.com/gtag/js?id=G-C59VD734Z0' />

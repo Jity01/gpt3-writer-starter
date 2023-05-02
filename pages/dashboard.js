@@ -9,16 +9,29 @@ import Category from '../lib/category/category';
 import CategoryGrid from '../lib/category-grid/category-grid';
 import Footer from '../lib/footer/footer';
 import { useEffect } from 'react';
-import { getUserId } from '../utils/client/db-helpers';
+import { getUserId, addUser } from '../utils/client/db-helpers';
 // import Root from '../lib/root/root';
 
 function Dashboard() {
   const { data: session } = useSession();
   const names = session.user.name.split(" ");
-  const userId = getUserId(names[0], names[1], session.user.email);
+  const getIdOfUser = () => {
+    const userId = getUserId(names[0], names[1], session.user.email);
+    return userId;
+  };
+  const userId = getIdOfUser();
   useEffect(() => {
-    if (!userId) addUser(names[0], names[1], session.user.email);
-  }, []);
+    userId
+      .then((id) => {
+        if (id === -1) {
+          console.log(userId)
+          addUser(names[0], names[1], session.user.email);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [])
   return (
     <>
       <Head>
@@ -42,12 +55,12 @@ function Dashboard() {
             <p>go on a audio call w jen!</p>
             <Link href="/audio-call"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
           </Category>
-          {/* <Category>
-            <h3>bookmarks</h3>
-            <p>see ur fav convos w jen :)</p>
-            <Link href="/bookmarks"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
-          </Category>
           <Category>
+            <h3>snaplog</h3>
+            <p>log ur thoughts</p>
+            <Link href="/snaplog"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
+          </Category>
+        {/* <Category>
             <h3>scoreboard</h3>
             <p>see ur notes on jen&apos;s advice</p>
             <Link href="/scoreboard"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>

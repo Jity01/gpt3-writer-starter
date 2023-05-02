@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { Client } = require('pg');
+const { Pool } = require('pg');
 
 const connectionString = process.env.DB_URL;
-const client = new Client({ connectionString });
+const pool = new Pool({ connectionString });
 
 /**
  * DATABASE SCHEMA:
@@ -15,12 +15,10 @@ const client = new Client({ connectionString });
 
 module.exports.query = async (text, values, callback) => {
   try {
-    await client.connect();
-    const result = await client.query(text, values, callback);
-    await client.end();
+    const result = await pool.query(text, values, callback);
+    const data = result.rows;
     return result;
-  } catch (e) {
-    console.log(e);
-    return new Error('ERROR while querying database: ', e);
+  } catch(err) {
+    console.log('Error when executing query:', err.stack);
   }
 };
