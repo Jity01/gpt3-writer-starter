@@ -17,7 +17,7 @@ module.exports.query = async (text, values, callback) => {
   try {
     const result = await pool.query(text, values, callback);
     const data = result.rows;
-    return result;
+    return data;
   } catch(err) {
     console.log('Error when executing query:', err.stack);
   }

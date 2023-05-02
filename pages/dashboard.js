@@ -43,22 +43,42 @@ function Dashboard() {
           <Category>
             <h3>emapthy zone</h3>
             <p>just want empathy?</p>
-            <Link href="/empathy-zone"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
+            <Link
+              href="/empathy-zone"
+              style={{ textDecoration: 'none' }}
+            >
+              <Button onClickAction={() => {}}>let&apos;s go</Button>
+            </Link>
           </Category>
           <Category>
             <h3>prompt</h3>
             <p>go to a text convo w jen</p>
-            <Link href="/prompt"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
+            <Link
+              href="/prompt"
+              style={{ textDecoration: 'none' }}
+            >
+              <Button onClickAction={() => {}}>let&apos;s go</Button>
+            </Link>
           </Category>
           <Category>
             <h3>audio call</h3>
             <p>go on a audio call w jen!</p>
-            <Link href="/audio-call"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
+            <Link
+              href="/audio-call"
+              style={{ textDecoration: 'none' }}
+            >
+              <Button onClickAction={() => {}}>let&apos;s go</Button>
+            </Link>
           </Category>
           <Category>
             <h3>snaplog</h3>
             <p>log ur thoughts</p>
-            <Link href="/snaplog"><Button onClickAction={() => {}}>let&apos;s go</Button></Link>
+            <Link
+              href="/snaplog"
+              style={{ textDecoration: 'none' }}
+            >
+              <Button onClickAction={() => {}}>let&apos;s go</Button>
+            </Link>
           </Category>
         {/* <Category>
             <h3>scoreboard</h3>

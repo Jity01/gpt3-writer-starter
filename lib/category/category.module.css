@@ -12,7 +12,10 @@
 
 .innerBox {
     border: 6px solid #FBE7C6;
-    padding: 14px;
+    padding-top: 5px;
+    padding-right: 50px;
+    padding-left: 20px;
+    padding-bottom: 10px;
 }
 
 @media screen and (max-width: 350px) {

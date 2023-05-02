@@ -8,7 +8,7 @@ const getLogs = async (req, res) => {
   WHERE users.id = $1;`;
   const values = [userId];
   const response = await db.query(text, values);
-  res.status(200).json({ logs: response.rows });
+  res.status(200).json({ logs: response });
 };
 
 export default getLogs;
