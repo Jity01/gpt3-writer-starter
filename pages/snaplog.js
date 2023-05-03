@@ -14,7 +14,6 @@ function SnapLog({ userId, logs }) {
   const handleClick = async () => {
     if (userId) {
       setIsGenerating(true);
-      console.log('here')
       await addLog(logMessage, userId);
       setUpdatedLogs(await getLogsByUserId(userId));
       setlogMessage('');
