@@ -2,3 +2,9 @@
     position: absolute;
     bottom: 0;
 }
+
+/* TODO: fix this btn placement */
+/* @media screen and (max-width: 640px) {
+    .footerContainer {
+    }
+} */
