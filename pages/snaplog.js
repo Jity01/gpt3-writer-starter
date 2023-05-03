@@ -43,10 +43,10 @@ function SnapLog({ userId, logs }) {
           />
         </LogBox>
         {
-          updatedLogs && updatedLogs.slice(0).reverse().map((log) => {
+          updatedLogs && updatedLogs.slice(0).reverse().map((log, idx) => {
             return (
               <div key={log.id}>
-                <Log id={log.id} message={log.message} createdAt={log.created_at}>
+                <Log numOfLogs={updatedLogs.length - idx} message={log.message} createdAt={log.created_at}>
                   <Button onClickAction={() => handleDelete(log.id)}>delete</Button>
                 </Log>
               </div>
