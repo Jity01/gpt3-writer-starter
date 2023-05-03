@@ -47,4 +47,14 @@ export const getLogsByUserId = async (userId) => {
   const data = await response.json();
   const { logs } = data;
   return logs;
-}
+};
+
+export const deleteLog = async (logId) => {
+  await fetch(`/api/db/delete-log`, {
+    method: 'POST',
+    headers: {
+     'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ logId }),
+  });
+};
