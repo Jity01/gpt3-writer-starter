@@ -11,11 +11,12 @@ function SnapLog({ userId, logs }) {
   const [logMessage, setlogMessage] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [updatedLogs, setUpdatedLogs] = useState([...logs]);
-  const handleClick = async () => {
+  const handleClick = async (e) => {
     if (userId) {
       setIsGenerating(true);
       await addLog(logMessage, userId);
       setUpdatedLogs(await getLogsByUserId(userId));
+      e.preventDefault();
       setlogMessage('');
       setIsGenerating(false);
     }
