@@ -29,7 +29,7 @@ function SnapLog({ userId, logs }) {
         }>
           <textarea
             className="empathy-zone-textarea"
-            placeholder="what are your thoughts?"
+            placeholder="whatcha thinkin?"
             input={userInput}
             onChange={(e) => setUserInput(e.target.value)}
           />

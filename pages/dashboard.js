@@ -47,7 +47,7 @@ function Dashboard() {
               href="/empathy-zone"
               style={{ textDecoration: 'none' }}
             >
-              <Button onClickAction={() => {}}>let&apos;s go</Button>
+              <Button>let&apos;s go</Button>
             </Link>
           </Category>
           <Category>
@@ -57,7 +57,7 @@ function Dashboard() {
               href="/prompt"
               style={{ textDecoration: 'none' }}
             >
-              <Button onClickAction={() => {}}>let&apos;s go</Button>
+              <Button>let&apos;s go</Button>
             </Link>
           </Category>
           <Category>
@@ -67,7 +67,7 @@ function Dashboard() {
               href="/audio-call"
               style={{ textDecoration: 'none' }}
             >
-              <Button onClickAction={() => {}}>let&apos;s go</Button>
+              <Button>let&apos;s go</Button>
             </Link>
           </Category>
           <Category>
@@ -77,7 +77,7 @@ function Dashboard() {
               href="/snaplog"
               style={{ textDecoration: 'none' }}
             >
-              <Button onClickAction={() => {}}>let&apos;s go</Button>
+              <Button>let&apos;s go</Button>
             </Link>
           </Category>
         {/* <Category>
