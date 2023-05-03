@@ -87,6 +87,9 @@ function Dashboard() {
           </Category> */}
         </CategoryGrid>
       </div>
+      <br />
+      <br />
+      <br />
       <Footer />
     </>
   );
