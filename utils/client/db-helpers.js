@@ -2,7 +2,7 @@
 const baseURL = process.env.NODE_ENV === 'production' ? process.env.PROD_BASEURL : process.env.DEV_BASEURL;
 
 export const addLog = async (logMessage, userId) => {
-  await fetch(`/api/db/add-log`, {
+  await fetch(`https://reinforceyourshit.up.railway.app/api/db/add-log`, {
     method: 'POST',
     headers: {
      'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ export const addLog = async (logMessage, userId) => {
 };
 
 export const addUser = async (firstName, lastName, email) => {
-  await fetch(`/api/db/add-user`, {
+  await fetch(`https://reinforceyourshit.up.railway.app/api/db/add-user`, {
     method: 'POST',
     headers: {
     'Content-Type': 'application/json',
@@ -22,8 +22,7 @@ export const addUser = async (firstName, lastName, email) => {
 };
 
 export const getUserId = async (firstName, lastName, email) => {
-  console.log(`${baseURL}/api/db/get-user-id`);
-    const response = await fetch(`/api/db/get-user-id`,
+    const response = await fetch(`https://reinforceyourshit.up.railway.app/api/db/get-user-id`,
     {
         method: 'POST',
         headers: {
@@ -37,7 +36,7 @@ export const getUserId = async (firstName, lastName, email) => {
 };
 
 export const getLogsByUserId = async (userId) => {
-  const response = await fetch(`/api/db/get-logs`,
+  const response = await fetch(`https://reinforceyourshit.up.railway.app/api/db/get-logs`,
   {
       method: 'POST',
       headers: {
@@ -51,7 +50,7 @@ export const getLogsByUserId = async (userId) => {
 };
 
 export const deleteLog = async (logId) => {
-  await fetch(`/api/db/delete-log`, {
+  await fetch(`https://reinforceyourshit.up.railway.app/api/db/delete-log`, {
     method: 'POST',
     headers: {
      'Content-Type': 'application/json',
