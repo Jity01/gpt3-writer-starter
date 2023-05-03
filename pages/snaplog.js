@@ -11,12 +11,11 @@ function SnapLog({ userId, logs }) {
   const [logMessage, setlogMessage] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [updatedLogs, setUpdatedLogs] = useState([...logs]);
-  const handleClick = async (e) => {
+  const handleClick = async () => {
     if (userId) {
       setIsGenerating(true);
       await addLog(logMessage, userId);
       setUpdatedLogs(await getLogsByUserId(userId));
-      e.preventDefault();
       setlogMessage('');
       setIsGenerating(false);
     }
@@ -39,7 +38,7 @@ function SnapLog({ userId, logs }) {
           <textarea
             className="empathy-zone-textarea"
             placeholder="whatcha thinkin?"
-            input={logMessage}
+            value={logMessage}
             onChange={(e) => setlogMessage(e.target.value)}
           />
         </LogBox>

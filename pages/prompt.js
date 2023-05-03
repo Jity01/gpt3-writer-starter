@@ -32,6 +32,7 @@ function Prompt() {
     setIsGenerating(true);
     const text = await getAdviceGeneration(userInput);
     setIsGenerating(false);
+    setUserInput('');
     setApiOutput(text);
   };
 
