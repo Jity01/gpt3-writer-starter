@@ -22,7 +22,8 @@ export const addUser = async (firstName, lastName, email) => {
 };
 
 export const getUserId = async (firstName, lastName, email) => {
-    const response = await fetch(`http://localhost:3000/api/db/get-user-id`,
+  console.log(`${baseURL}/api/db/get-user-id`);
+    const response = await fetch(`/api/db/get-user-id`,
     {
         method: 'POST',
         headers: {
@@ -36,7 +37,7 @@ export const getUserId = async (firstName, lastName, email) => {
 };
 
 export const getLogsByUserId = async (userId) => {
-  const response = await fetch(`http://localhost:3000/api/db/get-logs`,
+  const response = await fetch(`/api/db/get-logs`,
   {
       method: 'POST',
       headers: {
