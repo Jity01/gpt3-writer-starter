@@ -11,6 +11,7 @@ import Footer from '../lib/footer/footer';
 import { useEffect } from 'react';
 import { getUserId, addUser } from '../utils/client/db-helpers';
 // import Root from '../lib/root/root';
+// changed root domain
 
 function Dashboard() {
   const { data: session } = useSession();
