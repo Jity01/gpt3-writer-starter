@@ -8,10 +8,10 @@ export const authOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    Twitter({
-      clientId: process.env.TWITTER_CONSUMER_KEY,
-      clientSecret: process.env.TWITTER_CONSUMER_SECRET,
-    }),
+    // Twitter({
+    //   clientId: process.env.TWITTER_CONSUMER_KEY,
+    //   clientSecret: process.env.TWITTER_CONSUMER_SECRET,
+    // }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
