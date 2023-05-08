@@ -11,17 +11,21 @@
 .parallelogram {
     width: 300px;
     min-height: 150px;
-    background: #FFAEBC;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 5px solid #FBE7C6;
     border-radius: 20px;
     padding: 3px;
 }
 
 .output-container {
     padding: 6px;
+}
+
+.container textarea {
+    border: 5px solid #FBE7C6;
+    box-shadow: 0px 0px 15px 1px #FFAEBC;
 }
 
 @media (max-width: 600px) {
