@@ -18,7 +18,7 @@ function SignIn({ providers }) {
           >
             sign in with
             {' '}
-            {provider.name}
+            {provider.name.toLowerCase()}
           </Button>
         </div>
       ))}
