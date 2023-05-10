@@ -2,6 +2,7 @@ import LogBox from "../lib/log-box/log-box";
 import { useState } from "react";
 import { addLog, getUserId, getLogsByUserId, deleteLog } from "../utils/client/db-helpers";
 import Button from "../lib/button/button";
+import LittleButton from "../lib/little-button/little-button";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Root from "../lib/root/root";
@@ -46,9 +47,13 @@ function SnapLog({ userId, logs }) {
           updatedLogs && updatedLogs.slice(0).reverse().map((log, idx) => {
             return (
               <div key={log.id}>
-                <Log numOfLogs={updatedLogs.length - idx} message={log.message} createdAt={log.created_at}>
-                  <Button onClickAction={() => handleDelete(log.id)}>delete</Button>
-                </Log>
+                <Log
+                  replyButton={<LittleButton onClickAction={() => handleReply(log.id)}>🪃</LittleButton>}
+                  deleteButton={<Button onClickAction={() => handleDelete(log.id)}>delete</Button>}
+                  numOfLogs={updatedLogs.length - idx}
+                  message={log.message}
+                  createdAt={log.created_at}
+                />
               </div>
           )})
         }

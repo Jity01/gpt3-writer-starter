@@ -25,7 +25,20 @@
 
 .container textarea {
     border: 5px solid #FBE7C6;
-    box-shadow: 0px 0px 15px 1px #FFAEBC;
+    box-shadow: 0px 0px 10px 0px #FFAEBC;
+    width: 290px;
+    display: block;
+    box-sizing: border-box;
+    height: 150px;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 1rem;
+    background-color: #a3f7f4;
+}
+
+.container textarea:focus {
+    outline: none;
+    border: 1.8px solid hsl(0, 0%, 20%);
 }
 
 @media (max-width: 600px) {
@@ -35,5 +48,10 @@
 
     .parallelogram {
         width: 270px;
+    }
+
+    .container textarea {
+        width: 270px;
+        box-shadow: 0px 0px 10px 0px #FFAEBC;
     }
 }

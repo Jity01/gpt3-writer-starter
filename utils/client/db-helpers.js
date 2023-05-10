@@ -23,17 +23,17 @@ export const addUser = async (firstName, lastName, email) => {
 };
 
 export const getUserId = async (firstName, lastName, email) => {
-    const response = await fetch(`${baseURL}/api/db/get-user-id`,
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ firstName, lastName, email }),
-    });
-    const data = await response.json();
-    const { userId } = data;
-    return userId;
+  const response = await fetch(`${baseURL}/api/db/get-user-id`,
+  {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ firstName, lastName, email }),
+  });
+  const data = await response.json();
+  const { userId } = data;
+  return userId;
 };
 
 export const getLogsByUserId = async (userId) => {

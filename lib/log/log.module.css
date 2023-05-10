@@ -11,6 +11,9 @@
     box-sizing: border-box;
     width: 330px;
     font-style: italic;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 @media (max-width: 600px) {
