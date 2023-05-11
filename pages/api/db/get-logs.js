@@ -3,8 +3,8 @@ const db = require('../../../db/db-model');
 const getLogs = async (req, res) => {
   const { userId } = req.body;
   const text = 
-  `SELECT logs.id, logs.message, logs.created_at 
-  FROM logs JOIN users ON logs.user_id = users.id 
+  `SELECT logs_with_replies.id, logs_with_replies.message, logs_with_replies.created_at, logs_with_replies.is_reply, logs_with_replies.reply_log_id
+  FROM logs_with_replies JOIN users ON logs_with_replies.user_id = users.id 
   WHERE users.id = $1;`;
   const values = [userId];
   const response = await db.query(text, values);

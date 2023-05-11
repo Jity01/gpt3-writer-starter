@@ -16,8 +16,17 @@
     justify-content: flex-end;
 }
 
+.isReply {
+    border-top: 18px solid #dda1dc;
+    margin-left: 10px;
+    width: 290px;
+}
+
 @media (max-width: 600px) {
     .container {
         width: 300px;
+    }
+    .isReply {
+        width: 260px;
     }
 }

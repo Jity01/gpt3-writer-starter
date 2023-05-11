@@ -1,14 +1,27 @@
 // TODO: fix undefined urls (v volatile)
 // const baseURL = process.env.NODE_ENV === 'production' ? process.env.PROD_BASEURL : process.env.DEV_BASEURL;
-const baseURL = 'https://reinfrc.com'
+const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://reinfrc.com'
 
-export const addLog = async (logMessage, userId) => {
-  await fetch(`${baseURL}/api/db/add-log`, {
+export const addLog = async (logMessage, userId, isReply) => {
+  const response = await fetch(`${baseURL}/api/db/add-log`, {
     method: 'POST',
     headers: {
      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ logMessage, userId }),
+    body: JSON.stringify({ logMessage, userId, isReply }),
+  });
+  const data = await response.json();
+  const { lastLogId } = data;
+  return lastLogId;
+};
+
+export const addReplyToLog = async (logId, replyLogId) => {
+  await fetch(`${baseURL}/api/db/add-reply-to-log`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ logId, replyLogId }),
   });
 };
 
@@ -52,6 +65,16 @@ export const getLogsByUserId = async (userId) => {
 
 export const deleteLog = async (logId) => {
   await fetch(`${baseURL}/api/db/delete-log`, {
+    method: 'POST',
+    headers: {
+     'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ logId }),
+  });
+};
+
+export const resetReplyLogId = async (logId) => {
+  await fetch(`${baseURL}/api/db/reset-reply-log-id`, {
     method: 'POST',
     headers: {
      'Content-Type': 'application/json',
