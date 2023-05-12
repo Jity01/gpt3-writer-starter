@@ -17,8 +17,8 @@ the conversation:
 `
 
 export const initialPrinciplePrompt = `
-listen to the situation i describe i am experiencing and choose the principle that is most fitting and most interesting to the situation out of the
-principles that i list here. when you answer, make sure to keep the format i give to you.
+listen to the situation i describe i am experiencing and choose two to three principles that are most fitting and most interesting
+to the situation out of the principles that i list here. when you answer, make sure to keep the format i give to you.
 that means do not say anything else except to spit the principle that is most fitting to the situation in the way i format it.
 be very accurate and verbaitem.
 make sure the quote is quoted properly and accurately.
