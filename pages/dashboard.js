@@ -10,7 +10,6 @@ import CategoryGrid from '../lib/category-grid/category-grid';
 import Footer from '../lib/footer/footer';
 import { useEffect } from 'react';
 import { getUserId, addUser } from '../utils/client/db-helpers';
-// import Root from '../lib/root/root';
 
 function Dashboard() {
   const { data: session } = useSession();
@@ -50,7 +49,7 @@ function Dashboard() {
               <Button>let&apos;s go</Button>
             </Link>
           </Category>
-          {/* <Category>
+          <Category>
             <h3>prompt</h3>
             <p>go to a text convo w jen</p>
             <Link
@@ -59,7 +58,7 @@ function Dashboard() {
             >
               <Button>let&apos;s go</Button>
             </Link>
-          </Category> */}
+          </Category>
           <Category>
             <h3>audio call</h3>
             <p>go on a audio call w jen!</p>

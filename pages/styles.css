@@ -183,6 +183,7 @@ textarea {
     outline: none;
     display: flex;
     padding: 10px;
+    padding-top: 40px;
     flex-direction: column;
     justify-content: flex-start;
     flex-shrink: 0;
@@ -191,7 +192,7 @@ textarea {
 }
 
 .output-content p {
-    text-align: center;
+    text-align: start;
     white-space: pre-line;
     color: hsl(0, 0%, 20%);
 }

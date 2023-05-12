@@ -7,11 +7,15 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from './api/auth/[...nextauth]';
 import Title from '../lib/title/title';
 import Root from '../lib/root/root';
-import { getAdviceGeneration } from '../utils/client/prompt-helpers';
+import { getFittingPrinciple, createSearchContext } from '../utils/client/prompt-helpers';
 import { useSpeechSynthesis } from 'react-speech-kit';
 import Button from '../lib/button/button';
+import {
+  getUserId,
+  getLogsByUserId
+} from "../utils/client/db-helpers";
 
-function Prompt() {
+function Prompt({ userId }) {
   const [userInput, setUserInput] = useState('');
   const [apiOutput, setApiOutput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -30,10 +34,20 @@ function Prompt() {
   const callGenerateEndpoint = async () => {
     if (speaking) cancel();
     setIsGenerating(true);
-    const text = await getAdviceGeneration(userInput);
+    const logs = await getLogs();
+    const searchContext = createSearchContext(logs, userInput);
+    const text = await getFittingPrinciple(searchContext);
     setIsGenerating(false);
     setUserInput('');
     setApiOutput(text);
+  };
+
+  const getLogs = async () => {
+    if (userId) {
+      const logs = await getLogsByUserId(userId);
+      return logs;
+    }
+    return [];
   };
 
   return (
@@ -57,8 +71,8 @@ function Prompt() {
           <div className="output">
             <div className="output-header-container">
               <div className="output-header">
-                <h3>here&apos;s what i think</h3>
-                <button type="button" onClick={playOutput}>play my thoughts</button>
+                <h3>ur thoughts</h3>
+                <button type="button" onClick={playOutput}>play them instead</button>
               </div>
             </div>
             <div className="output-content">
@@ -73,11 +87,15 @@ function Prompt() {
 
 export async function getServerSideProps(context) {
   const { req, res } = context;
+  let userId = null;
   const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return { redirect: { destination: '/' } };
+  } else {
+    const names = session.user.name.split(" ");
+    userId = await getUserId(names[0], names[1], session.user.email);
   }
-  return { props: { session } };
+  return { props: { session, userId } };
 }
 
 export default Prompt;

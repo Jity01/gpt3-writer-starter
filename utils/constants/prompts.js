@@ -16,10 +16,14 @@ do not stray away from the point of the conversation, which is for you to emotin
 the conversation:
 `
 
-export const initialAdivcePrompt = `
-convince me as if you are sam altman, but do not explicitly say that you are sam altman.
-talk like you are an angsty teenager on some contemplation buddhist shit.
-talk straight. be really informal. be really visceral and unintuitive.
+export const initialPrinciplePrompt = `
+listen to the situation i describe i am experiencing and choose the principle that is most fitting and most interesting to the situation out of the
+principles that i list here. when you answer, make sure to keep the format i give to you.
+that means do not say anything else except to spit the principle that is most fitting to the situation in the way i format it.
+be very accurate and verbaitem.
+make sure the quote is quoted properly and accurately.
+
+the principles:
 `;
 
 export const initialEmpathyPrompt = `

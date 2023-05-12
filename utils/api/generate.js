@@ -6,20 +6,6 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-// TODO:
-// always try to recommend that a positive possibility. "maybe this could happen."
-// uphold the value of radical optimism
-
-// const choosePromptPrefix = () => {
-//   let prefix = '';
-//   if (highlightChoice === 'negative') {
-//     prefix = `In your answer, please do not include ${highlightedText}, because ${reasonForHighlight}`;
-//   } else {
-//     prefix = `If possible and relevant, include ${highlightedText} in your answer, because ${reasonForHighlight}`;
-//   }
-//   return prefix;
-// };
-
 export const generate = async (promptPrefix, conversation) => {
   const baseCompletion = await openai.createCompletion({
     model: 'text-davinci-003',
