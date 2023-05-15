@@ -82,3 +82,16 @@ export const resetReplyLogId = async (logId) => {
     body: JSON.stringify({ logId }),
   });
 };
+
+export const queryVectorDB = async (userId, userInput) => {
+  const response = await fetch(`${baseURL}/api/db/query-vector-db`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, userInput }),
+  });
+  const matches = await response.json();
+  const { scoredVectors } = matches;
+  return scoredVectors;
+};

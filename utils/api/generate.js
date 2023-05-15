@@ -7,6 +7,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export const generate = async (promptPrefix, conversation) => {
+  openai.createEmbedding
   const baseCompletion = await openai.createCompletion({
     model: 'text-davinci-003',
     prompt: `${promptPrefix}${conversation}\n`,

@@ -16,11 +16,6 @@ export const getConversationGeneration = async (conversation) => {
   return responseText;
 };
 
-export const getFittingPrinciple = async (userInput) => {
-  const responseText = await getGeneration(userInput, 'get-fitting-principle');
-  return responseText;
-};
-
 export const getEmpathyGeneration = async (chatPrompt) => {
   const responseText = await getGeneration(chatPrompt, 'generate-empathy');
   return responseText;
@@ -43,12 +38,3 @@ export const createFullChatContext = (previousChatLines, currentUserLine) => {
   const fullChatContextForPrompt = addCurrentLine(chatContext, currentUserLine);
   return fullChatContextForPrompt;
 };
-
-export const createSearchContext = (logs, userInput) => {
-  let searchContext = logs.reduce((acc, log) => {
-    if (!log.is_reply) return acc + `\n\nprinciple #${log.id}:\nprinciple message: "${log.message}"\n`;
-  }, '');
-  searchContext += `\n\nmy situation: "${userInput}"`;
-  searchContext += `\n\nyour answer to the most fitting principle: `;
-  return searchContext;
-}

@@ -7,47 +7,26 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from './api/auth/[...nextauth]';
 import Title from '../lib/title/title';
 import Root from '../lib/root/root';
-import { getFittingPrinciple, createSearchContext } from '../utils/client/prompt-helpers';
-import { useSpeechSynthesis } from 'react-speech-kit';
 import Button from '../lib/button/button';
 import {
   getUserId,
-  getLogsByUserId
+  getLogsByUserId,
+  queryVectorDB
 } from "../utils/client/db-helpers";
+import { insertLogsIntoVectorDB } from '../utils/api/insert-logs-into-vector-db';
+import { fetchVector } from '../utils/api/fetch-vector';
 
 function Prompt({ userId }) {
   const [userInput, setUserInput] = useState('');
-  const [apiOutput, setApiOutput] = useState('');
+  const [matches, setMatches] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const {
-    speak,
-    cancel,
-    speaking,
-    supported,
-    voices,
-  } = useSpeechSynthesis();
-
-  const playOutput = () => {
-    if (supported) speak({ text: apiOutput, voice: voices[0] });
-  };
 
   const callGenerateEndpoint = async () => {
-    if (speaking) cancel();
     setIsGenerating(true);
-    const logs = await getLogs();
-    const searchContext = createSearchContext(logs, userInput);
-    const text = await getFittingPrinciple(searchContext);
+    const matches = await queryVectorDB(userId, userInput);
+    setMatches(matches);
     setIsGenerating(false);
     setUserInput('');
-    setApiOutput(text);
-  };
-
-  const getLogs = async () => {
-    if (userId) {
-      const logs = await getLogsByUserId(userId);
-      return logs;
-    }
-    return [];
   };
 
   return (
@@ -56,7 +35,7 @@ function Prompt({ userId }) {
         <title>textin jen :)</title>
       </Head>
       <Title
-        title="reinforce ur shit."
+        title="reinforce."
         subtitle="it's so nice when you remember your principles, isn't it?"
       />
       <div className="prompt-container">
@@ -67,16 +46,26 @@ function Prompt({ userId }) {
           onChange={(e) => setUserInput(e.target.value)}
         />
         <Button onClickAction={callGenerateEndpoint} isGenerating={isGenerating}>jenerate</Button>
-        { apiOutput && (
+        { matches && (
           <div className="output">
             <div className="output-header-container">
               <div className="output-header">
-                <h3>ur thoughts</h3>
-                <button type="button" onClick={playOutput}>play them instead</button>
+                <br />
+                <h3>search results</h3>
               </div>
             </div>
             <div className="output-content">
-              <p>{apiOutput}</p>
+              {
+                matches.map((match, idx) => {
+                  return (
+                    <div style={{ maxWidth: '500px', padding: '10px', margin: '5px', border: '4px solid hsl(350, 100%, 84%)'}}>
+                      <p><h3>~~match #{idx + 1}~~</h3></p>
+                      <p style={{ color: 'purple', fontSize: '0.9rem' }}>search score: { Math.trunc((match.score.toFixed(3) * 100) * 100) / 100}%</p>
+                      <p>{ match.metadata.logMessage }</p>
+                    </div>
+                  );
+                })
+              }
             </div>
           </div>
         ) }
@@ -85,15 +74,28 @@ function Prompt({ userId }) {
   );
 }
 
+const addMissingVectorsIntoDB = async (userId, logs) => {
+  const idsOfLogs = logs.map((log) => log.id.toString());
+  const vectorsInDB = await fetchVector(userId, idsOfLogs);
+  const logsToInsertIntoVectorDB = logs.filter(log => {
+    if (vectorsInDB.vectors[log.id]) return false;
+    return true;
+  });
+  await insertLogsIntoVectorDB(userId, logsToInsertIntoVectorDB);
+}
+
 export async function getServerSideProps(context) {
   const { req, res } = context;
   let userId = null;
+  let logs = null;
   const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return { redirect: { destination: '/' } };
   } else {
     const names = session.user.name.split(" ");
     userId = await getUserId(names[0], names[1], session.user.email);
+    logs = await getLogsByUserId(userId);
+    await addMissingVectorsIntoDB(userId, logs);
   }
   return { props: { session, userId } };
 }
