@@ -40,36 +40,6 @@ function Dashboard() {
         <Header username={`${session.user.name.toLowerCase()}`} page="dashboard" />
         <CategoryGrid>
           <Category>
-            <h3>emapthy zone</h3>
-            <p>just want empathy?</p>
-            <Link
-              href="/empathy-zone"
-              style={{ textDecoration: 'none' }}
-            >
-              <Button>let&apos;s go</Button>
-            </Link>
-          </Category>
-          <Category>
-            <h3>prompt</h3>
-            <p>go to a text convo w jen</p>
-            <Link
-              href="/prompt"
-              style={{ textDecoration: 'none' }}
-            >
-              <Button>let&apos;s go</Button>
-            </Link>
-          </Category>
-          <Category>
-            <h3>audio call</h3>
-            <p>go on a audio call w jen!</p>
-            <Link
-              href="/audio-call"
-              style={{ textDecoration: 'none' }}
-            >
-              <Button>let&apos;s go</Button>
-            </Link>
-          </Category>
-          <Category>
             <h3>snaplog</h3>
             <p>log ur thoughts</p>
             <Link
@@ -79,6 +49,36 @@ function Dashboard() {
               <Button>let&apos;s go</Button>
             </Link>
           </Category>
+          <Category>
+            <h3>search</h3>
+            <p>search thru ur thoughts</p>
+            <Link
+              href="/prompt"
+              style={{ textDecoration: 'none' }}
+            >
+              <Button>let&apos;s go</Button>
+            </Link>
+          </Category>
+          {/* <Category>
+            <h3>audio call</h3>
+            <p>go on a audio call w jen!</p>
+            <Link
+              href="/audio-call"
+              style={{ textDecoration: 'none' }}
+            >
+              <Button>let&apos;s go</Button>
+            </Link>
+          </Category> */}
+          {/* <Category>
+            <h3>emapthy zone</h3>
+            <p>just want empathy?</p>
+            <Link
+              href="/empathy-zone"
+              style={{ textDecoration: 'none' }}
+            >
+              <Button>let&apos;s go</Button>
+            </Link>
+          </Category> */}
         {/* <Category>
             <h3>scoreboard</h3>
             <p>see ur notes on jen&apos;s advice</p>

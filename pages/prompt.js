@@ -35,7 +35,7 @@ function Prompt({ userId }) {
         <title>textin jen :)</title>
       </Head>
       <Title
-        title="reinforce."
+        title="search your thoughts."
         subtitle="it's so nice when you remember your principles, isn't it?"
       />
       <div className="prompt-container">
@@ -45,22 +45,35 @@ function Prompt({ userId }) {
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
         />
-        <Button onClickAction={callGenerateEndpoint} isGenerating={isGenerating}>jenerate</Button>
+        <Button onClickAction={callGenerateEndpoint} isGenerating={isGenerating}>search!</Button>
         { matches && (
           <div className="output">
             <div className="output-header-container">
               <div className="output-header">
                 <br />
-                <h3>search results</h3>
               </div>
             </div>
             <div className="output-content">
               {
                 matches.map((match, idx) => {
                   return (
-                    <div style={{ maxWidth: '500px', padding: '10px', margin: '5px', border: '4px solid hsl(350, 100%, 84%)'}}>
+                    <div
+                      style={{
+                        maxWidth: '500px',
+                        padding: '10px',
+                        margin: '5px',
+                        border: '4px solid hsl(350, 100%, 84%)'
+                      }}
+                    >
                       <p><h3>~~match #{idx + 1}~~</h3></p>
-                      <p style={{ color: 'purple', fontSize: '0.9rem' }}>search score: { Math.trunc((match.score.toFixed(3) * 100) * 100) / 100}%</p>
+                      <p
+                        style={{
+                          color: 'purple',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        search score: { Math.trunc((match.score.toFixed(3) * 100) * 100) / 100}%
+                      </p>
                       <p>{ match.metadata.logMessage }</p>
                     </div>
                   );
