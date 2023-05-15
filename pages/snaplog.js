@@ -14,6 +14,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Root from "../lib/root/root";
 import Log from "../lib/log/log";
+import Head from "next/head";
 
 const scrollToRef = (ref) => window.scrollTo(0, ref.current.offsetTop)  
 
@@ -73,6 +74,9 @@ function SnapLog({ userId, logs }) {
   };
   return (
     <Root>
+      <Head>
+        <title>snaplog</title>
+      </Head>
       <h1>snaplog</h1>
         <LogBox
           button={
