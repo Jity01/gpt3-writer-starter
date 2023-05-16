@@ -72,6 +72,20 @@ function SnapLog({ userId, logs }) {
     setReplyMessage('');
     setIdOfLogToReplyTo(null);
   };
+  const getParentMatches = () => {
+    const parentMatches = updatedLogs.filter(log => log.is_reply === false);
+    return parentMatches;
+  };
+  const getChildrenMatchesOfLog = (log) => {
+    const childrenMatches = [];
+    let currentLog = log;
+    while (currentLog.reply_log_id) {
+      const childMatch = updatedLogs.find(log => log.id === currentLog.reply_log_id);
+      childrenMatches.push(childMatch);
+      currentLog = childMatch;
+    }
+    return childrenMatches;
+  };
   return (
     <Root>
       <Head>
@@ -96,18 +110,36 @@ function SnapLog({ userId, logs }) {
           />
         </LogBox>
         {
-          updatedLogs && updatedLogs.slice(0).reverse().map((log, idx) => {
+          updatedLogs && getParentMatches().slice(0).reverse().map((log) => {
             return (
+              <>
               <div key={log.id}>
                 <Log
                   replyButton={<LittleButton onClickAction={() => openReply(log.id)}>🪃</LittleButton>}
                   deleteButton={<Button onClickAction={() => handleDelete(log.id)}>delete</Button>}
-                  numOfLogs={updatedLogs.length - idx}
+                  numOfLogs={log.id}
                   message={log.message}
                   createdAt={log.created_at}
                   isReply={log.is_reply}
                 />
               </div>
+              <div key={log.id + 1}>
+                {
+                  getChildrenMatchesOfLog(log).map((childLog) => {
+                    return (
+                      <Log
+                        replyButton={<LittleButton onClickAction={() => openReply(childLog.id)}>🪃</LittleButton>}
+                        deleteButton={<Button onClickAction={() => handleDelete(childLog.id)}>delete</Button>}
+                        numOfLogs={childLog.id}
+                        message={childLog.message}
+                        createdAt={childLog.created_at}
+                        isReply={childLog.is_reply}
+                      />
+                    )
+                  })
+                }
+              </div>
+              </> 
           )})
         }
     </Root>
