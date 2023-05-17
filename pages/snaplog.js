@@ -7,6 +7,7 @@ import {
   deleteLog,
   addReplyToLog,
   resetReplyLogId,
+  addWin,
 } from "../utils/client/db-helpers";
 import Button from "../lib/button/button";
 import LittleButton from "../lib/little-button/little-button";
@@ -15,8 +16,8 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import Root from "../lib/root/root";
 import Log from "../lib/log/log";
 import Head from "next/head";
-
-const scrollToRef = (ref) => window.scrollTo(0, ref.current.offsetTop)  
+import Notification from "../lib/notification/notification";
+import Input from '../lib/input/input'
 
 function SnapLog({ userId, logs }) {
   const [logMessage, setlogMessage] = useState('');
@@ -25,8 +26,9 @@ function SnapLog({ userId, logs }) {
   const [replyMode, setReplyMode] = useState(false);
   const [replyMessage, setReplyMessage] = useState('');
   const [idOfLogToReplyTo, setIdOfLogToReplyTo] = useState(null);
+  const [win, setWin] = useState('');
   const myRef = useRef(null)
-  const executeScroll = () => scrollToRef(myRef)
+  const executeScroll = () => myRef.current.scrollIntoView();
   const handleLog = async () => {
     if (userId) {
       setIsGenerating(true);
@@ -86,12 +88,31 @@ function SnapLog({ userId, logs }) {
     }
     return childrenMatches;
   };
+  const addWinToLog = async (logId, currentWins) => {
+    if (userId) {
+      setIsGenerating(true);
+      const updatedWins = currentWins ? [...currentWins, win] : [win];
+      await addWin(logId, updatedWins);
+      setUpdatedLogs(await getLogsByUserId(userId));
+      setWin('');
+      setIsGenerating(false);
+    }
+  };
+  const deleteWinFromLog = async (logId, currentWins, winToDelete) => {
+    if (userId) {
+      setIsGenerating(true);
+      const updatedWins = currentWins.filter(win => win !== winToDelete);
+      await addWin(logId, updatedWins);
+      setUpdatedLogs(await getLogsByUserId(userId));
+      setIsGenerating(false);
+    }
+  };
   return (
     <Root>
       <Head>
         <title>snaplog</title>
       </Head>
-      <h1>snaplog</h1>
+      <h1 ref={myRef}>snaplog</h1>
         <LogBox
           button={
             replyMode
@@ -101,44 +122,80 @@ function SnapLog({ userId, logs }) {
                 <Button onClickAction={cancelReply}>cancel</Button>
               </>
             : <Button onClickAction={handleLog} isGenerating={isGenerating}>log</Button>
-        }>
+          }
+        >
           <textarea
             placeholder={replyMode ? "what do wanna reply w?" : "what are u thinking abt?"}
             value={replyMode ? replyMessage : logMessage}
             onChange={replyMode ? (e) => setReplyMessage(e.target.value) : (e) => setlogMessage(e.target.value)}
-            ref={myRef}
           />
         </LogBox>
         {
           updatedLogs && getParentMatches().slice(0).reverse().map((log) => {
             return (
               <>
-              <div key={log.id}>
-                <Log
-                  replyButton={<LittleButton onClickAction={() => openReply(log.id)}>🪃</LittleButton>}
-                  deleteButton={<Button onClickAction={() => handleDelete(log.id)}>delete</Button>}
-                  numOfLogs={log.id}
-                  message={log.message}
-                  createdAt={log.created_at}
-                  isReply={log.is_reply}
-                />
-              </div>
-              <div key={log.id + 1}>
-                {
-                  getChildrenMatchesOfLog(log).map((childLog) => {
-                    return (
-                      <Log
-                        replyButton={<LittleButton onClickAction={() => openReply(childLog.id)}>🪃</LittleButton>}
-                        deleteButton={<Button onClickAction={() => handleDelete(childLog.id)}>delete</Button>}
-                        numOfLogs={childLog.id}
-                        message={childLog.message}
-                        createdAt={childLog.created_at}
-                        isReply={childLog.is_reply}
-                      />
-                    )
-                  })
-                }
-              </div>
+                <div key={log.id}>
+                  <Log
+                    replyButton={<LittleButton onClickAction={() => openReply(log.id)}>🪃</LittleButton>}
+                    deleteButton={<Button onClickAction={() => handleDelete(log.id)}>delete</Button>}
+                    numOfLogs={log.id}
+                    message={log.message}
+                    createdAt={log.created_at}
+                    isReply={log.is_reply}
+                  />
+                </div>
+                <div
+                  key={log.id + 1}
+                  style={{
+                    padding: "20px 15px",
+                    borderRadius: "10px",
+                    boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <Input
+                    placeholder="🎉 add a win!"
+                    value={win} 
+                    onChangeAction={(e) => setWin(e.target.value)}
+                  />
+                  <LittleButton
+                    onClickAction={() => addWinToLog(log.id, log.wins)}
+                  >
+                    add
+                  </LittleButton>
+                  {
+                    log.wins && log.wins.map((winMessage) => {
+                      return (
+                        <Notification>
+                          { winMessage }
+                          <LittleButton
+                            onClickAction={
+                              () => deleteWinFromLog(log.id, log.wins, winMessage)
+                            }
+                          >
+                              🗑
+                          </LittleButton>
+                        </Notification> 
+                      )
+                    })
+                  }
+                </div>
+                <div key={log.id + 2}>
+                  {
+                    getChildrenMatchesOfLog(log).map((childLog) => {
+                      return (
+                        <Log
+                          key={childLog.id}
+                          replyButton={<LittleButton onClickAction={() => openReply(childLog.id)}>🪃</LittleButton>}
+                          deleteButton={<Button onClickAction={() => handleDelete(childLog.id)}>delete</Button>}
+                          numOfLogs={childLog.id}
+                          message={childLog.message}
+                          createdAt={childLog.created_at}
+                          isReply={childLog.is_reply}
+                        />
+                      )
+                    })
+                  }
+                </div>
               </> 
           )})
         }

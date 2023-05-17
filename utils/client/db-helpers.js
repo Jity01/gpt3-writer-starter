@@ -95,3 +95,13 @@ export const queryVectorDB = async (userId, userInput) => {
   const { scoredVectors } = matches;
   return scoredVectors;
 };
+
+export const addWin = async (logId, updatedWins) => {
+  await fetch(`${baseURL}/api/db/add-win`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ logId, updatedWins }),
+  });
+};

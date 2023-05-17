@@ -4,12 +4,12 @@
     box-shadow: none;
     background-color: transparent;
     border-radius: 5px;
+    padding: 8px 20px;
 }
 
 .button:hover {
     cursor: pointer;
     background-color: #FFAEBC;
-    color: #ffffff;
 }
 
 .button:active {

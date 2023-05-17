@@ -1,0 +1,22 @@
+.input {
+    width: 258px;
+    height: 30px;
+    background-color: transparent;
+    border: 1px solid black;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.input::placeholder {
+    font-size: 1rem;
+}
+
+.input:focus {
+    outline: 0.9px solid black;
+}
+
+@media (max-width: 600px) {
+    .input {
+        width: 220px;
+    }
+}
