@@ -131,18 +131,35 @@ function SnapLog({ userId, logs }) {
           />
         </LogBox>
         {
-          updatedLogs && getParentMatches().slice(0).reverse().map((log) => {
+          updatedLogs && getParentMatches().slice(0).reverse().map((log, logIdx) => {
             return (
               <>
                 <div key={log.id}>
                   <Log
                     replyButton={<LittleButton onClickAction={() => openReply(log.id)}>🪃</LittleButton>}
                     deleteButton={<Button onClickAction={() => handleDelete(log.id)}>delete</Button>}
-                    numOfLogs={log.id}
+                    numOfLogs={getParentMatches().length - (logIdx)}
                     message={log.message}
                     createdAt={log.created_at}
                     isReply={log.is_reply}
                   />
+                </div>
+                <div key={log.id + 2}>
+                  {
+                    getChildrenMatchesOfLog(log).map((childLog, childLogIdx) => {
+                      return (
+                        <Log
+                          key={childLog.id}
+                          replyButton={<LittleButton onClickAction={() => openReply(childLog.id)}>🪃</LittleButton>}
+                          deleteButton={<Button onClickAction={() => handleDelete(childLog.id)}>delete</Button>}
+                          numOfLogs={`${getParentMatches().length - logIdx}.${childLogIdx + 1}`}
+                          message={childLog.message}
+                          createdAt={childLog.created_at}
+                          isReply={childLog.is_reply}
+                        />
+                      )
+                    })
+                  }
                 </div>
                 <div
                   key={log.id + 1}
@@ -175,23 +192,6 @@ function SnapLog({ userId, logs }) {
                               🗑
                           </LittleButton>
                         </Notification> 
-                      )
-                    })
-                  }
-                </div>
-                <div key={log.id + 2}>
-                  {
-                    getChildrenMatchesOfLog(log).map((childLog) => {
-                      return (
-                        <Log
-                          key={childLog.id}
-                          replyButton={<LittleButton onClickAction={() => openReply(childLog.id)}>🪃</LittleButton>}
-                          deleteButton={<Button onClickAction={() => handleDelete(childLog.id)}>delete</Button>}
-                          numOfLogs={childLog.id}
-                          message={childLog.message}
-                          createdAt={childLog.created_at}
-                          isReply={childLog.is_reply}
-                        />
                       )
                     })
                   }
