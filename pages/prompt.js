@@ -87,6 +87,8 @@ function Prompt({ userId }) {
   );
 }
 
+// TODO: oh god remove this pls
+
 const addMissingVectorsIntoDB = async (userId, logs) => {
   const idsOfLogs = logs.map((log) => log.id.toString());
   const vectorsInDB = await fetchVector(userId, idsOfLogs);
