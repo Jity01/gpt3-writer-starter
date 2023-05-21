@@ -2,10 +2,6 @@
 // const baseURL = process.env.NODE_ENV === 'production' ? process.env.PROD_BASEURL : process.env.DEV_BASEURL;
 const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://reinfrc.com'
 
-import { use } from 'react';
-import { insertLogsIntoVectorDB } from '../api/insert-logs-into-vector-db';
-import { deleteVector } from '../api/vector-helpers';
-
 export const addLog = async (logMessage: string, userId: number, isReply: boolean) => {
   const response = await fetch(`${baseURL}/api/db/add-log`, {
     method: 'POST',
@@ -15,9 +11,8 @@ export const addLog = async (logMessage: string, userId: number, isReply: boolea
     body: JSON.stringify({ logMessage, userId, isReply }),
   });
   const data = await response.json();
-  const { lastLog } = data;
-  await insertLogsIntoVectorDB(userId, [lastLog]);
-  return lastLog.id;
+  await insertLogsIntoVectorDB(userId, data.lastLog);
+  return data.lastLog[0].id;
 };
 
 export const deleteLog = async (userId: number, logId: number) => {
@@ -28,7 +23,7 @@ export const deleteLog = async (userId: number, logId: number) => {
     },
     body: JSON.stringify({ logId }),
   });
-  await deleteVector(userId, logId.toString());
+  await deleteLogVector(userId, logId.toString());
 };
 
 export const addReplyToLog = async (logId, replyLogId) => {
@@ -150,3 +145,23 @@ export const addWin = async (logId, updatedWins) => {
       body: JSON.stringify({ logId, updatedWins }),
   });
 };
+
+export const insertLogsIntoVectorDB = async (userId, logs) => {
+  await fetch(`${baseURL}/api/db/insert-logs-into-vector-db`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, logs }),
+  });
+};
+
+export const deleteLogVector = async (userId, logId) => {
+  await fetch(`${baseURL}/api/db/delete-log-vector`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, logId }),
+  });
+}

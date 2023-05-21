@@ -3,8 +3,8 @@ import { PineconeClient } from "@pinecone-database/pinecone";
 export const fetchVectorFromLogs = async (userId: number, idOfLogsToFetch: string) => {
   const pinecone = new PineconeClient();
   await pinecone.init({
-    environment: process.env.PINECONE_LOGS_ENV,
-    apiKey: process.env.PINECONE_LOGS_API_KEY,
+    environment: process.env.PINECONE_LOGS_ENV as string,
+    apiKey: process.env.PINECONE_LOGS_API_KEY as string,
   });
   const pineconeIndex = pinecone.Index('logs');
 
@@ -20,8 +20,8 @@ export const fetchVectorFromLogs = async (userId: number, idOfLogsToFetch: strin
 export const fetchVectorFromFeedback = async (userId: number, idOfLogsToFetch: string) => {
   const pinecone = new PineconeClient();
   await pinecone.init({
-    environment: process.env.PINECONE_ENV,
-    apiKey: process.env.PINECONE_API_KEY,
+    environment: process.env.PINECONE_FEEDBACK_ENV as string,
+    apiKey: process.env.PINECONE_FEEDBACK_API_KEY as string,
   });
   const pineconeIndex = pinecone.Index('feedback');
 
@@ -36,8 +36,8 @@ export const fetchVectorFromFeedback = async (userId: number, idOfLogsToFetch: s
 export const deleteVector = async (userId: number, idOfLogsToDelete: string) => {
   const pinecone = new PineconeClient();
   await pinecone.init({
-    environment: process.env.PINECONE_ENV,
-    apiKey: process.env.PINECONE_API_KEY,
+    environment: process.env.PINECONE_LOGS_ENV as string,
+    apiKey: process.env.PINECONE_LOGS_API_KEY as string,
   });
   const pineconeIndex = pinecone.Index('logs');
 

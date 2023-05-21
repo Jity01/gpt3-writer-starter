@@ -6,11 +6,11 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-export const insertLogsIntoVectorDB = async (userId, logs) => {
+export const insertLogsIntoVectorDB = async (userId: number, logs: any) => {
   const pinecone = new PineconeClient();
   await pinecone.init({
-    environment: process.env.PINECONE_LOGS_ENV,
-    apiKey: process.env.PINECONE_LOGS_API_KEY,
+    environment: process.env.PINECONE_LOGS_ENV as string,
+    apiKey: process.env.PINECONE_LOGS_API_KEY as string,
   });
 
   let inputs = logs.slice();
@@ -19,13 +19,13 @@ export const insertLogsIntoVectorDB = async (userId, logs) => {
   // batch the inputs (limit of 4096)
   while (inputs.length) {
     let tokenCount = 0;
-    let batch = [];
+    let batch: any[] = [];
     while (inputs.length && tokenCount < 4096) {
       let logmessage = inputs.shift().message;
       batch.push(logmessage);
       tokenCount += logmessage.split(' ').length;
     }
-    let embeddingResult = await openai.createEmbedding({
+    let embeddingResult: any = await openai.createEmbedding({
         model: 'text-embedding-ada-002',
         input: batch,
     });
@@ -47,7 +47,7 @@ export const insertLogsIntoVectorDB = async (userId, logs) => {
   const pineconeIndex = pinecone.Index('logs');
 
   // add vectors to pinecone
-  let insertBatches = [];
+  let insertBatches: any[] = [];
   while (vectors.length) {
     let batch = vectors.splice(0, 250);
     let pineconeResult = await pineconeIndex.upsert({
