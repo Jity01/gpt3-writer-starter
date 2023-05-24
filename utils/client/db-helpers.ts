@@ -1,4 +1,7 @@
 // TODO: fix undefined urls (v volatile)
+
+import { log } from "console";
+
 // const baseURL = process.env.NODE_ENV === 'production' ? process.env.PROD_BASEURL : process.env.DEV_BASEURL;
 const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://reinfrc.com'
 
@@ -163,5 +166,15 @@ export const deleteLogVector = async (userId, logId) => {
       'Content-Type': 'application/json',
       },
       body: JSON.stringify({ userId, logId }),
+  });
+}
+
+export const addLike = async (logId: number, updatedLikes: number) => {
+  await fetch(`${baseURL}/api/db/add-like`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+    body: JSON.stringify({ logId, updatedLikes }),
   });
 }
