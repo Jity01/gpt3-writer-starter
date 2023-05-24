@@ -2,7 +2,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/forbid-prop-types */
 
-import PropTypes from 'prop-types';
 import { SessionProvider } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -11,12 +10,15 @@ import { PostHogProvider } from 'posthog-js/react';
 import './styles.css';
 
 if (typeof window !== 'undefined') {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_API_KEY, {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-    loaded: () => {
-      if (process.env.NODE_ENV === "development") posthog.debug()
-    },
-  })
+  posthog.init(
+    process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    {
+      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+      loaded: () => {
+        if (process.env.NODE_ENV === "development") posthog.debug()
+      },
+    }
+  )
 }
 
 function App({ Component, pageProps: { session, ...pageProps } }) {
@@ -29,19 +31,12 @@ function App({ Component, pageProps: { session, ...pageProps } }) {
     };
   }, []);
   return (
-    <>
+    <SessionProvider session={session}>
       <PostHogProvider client={posthog}>
-        <SessionProvider session={session}>
-          <Component {...pageProps} />
-        </SessionProvider>
+        <Component {...pageProps} />
       </PostHogProvider>
-    </>
+    </SessionProvider>
   );
 }
-
-App.propTypes = {
-  Component: PropTypes.elementType.isRequired,
-  pageProps: PropTypes.object.isRequired,
-};
 
 export default App;
