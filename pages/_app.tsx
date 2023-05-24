@@ -4,44 +4,37 @@
 
 import PropTypes from 'prop-types';
 import { SessionProvider } from 'next-auth/react';
-import Script from 'next/script';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import * as gtag from '../google-analytics/gtag';
+import posthog from 'posthog-js';
+import { PostHogProvider } from 'posthog-js/react';
 import './styles.css';
+
+if (typeof window !== 'undefined') {
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_API_KEY, {
+    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+    loaded: () => {
+      if (process.env.NODE_ENV === "development") posthog.debug()
+    },
+  })
+}
 
 function App({ Component, pageProps: { session, ...pageProps } }) {
   const router = useRouter();
   useEffect(() => {
-    const handleRouteChange = (url) => {
-      gtag.pageview(url);
-    };
+    const handleRouteChange = () => posthog?.capture("$pageview");
     router.events.on('routeChangeComplete', handleRouteChange);
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, [router.events]);
+  }, []);
   return (
     <>
-      <Script strategy='afterInteractive' src={process.env.GOOGLE_ANALYTICS_URL} />
-      <Script
-        id='google-analytics'
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-        
-          gtag('config', '${process.env.GOOGLE_ANALYTICS_ID}', {
-            page_path: window.location.pathname,
-          });
-        `,
-        }}
-      />
-      <SessionProvider session={session}>
-        <Component {...pageProps} />
-      </SessionProvider>
+      <PostHogProvider client={posthog}>
+        <SessionProvider session={session}>
+          <Component {...pageProps} />
+        </SessionProvider>
+      </PostHogProvider>
     </>
   );
 }
