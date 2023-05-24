@@ -16,9 +16,14 @@
     justify-content: flex-end;
 }
 
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
 .isReply {
     border-top: 18px solid #dda1dc;
-    margin-left: 10px;
+    margin-left: 3px;
     width: 290px;
 }
 

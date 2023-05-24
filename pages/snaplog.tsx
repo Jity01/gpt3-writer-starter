@@ -7,7 +7,7 @@ import {
   deleteLog,
   addReplyToLog,
   resetReplyLogId,
-  addWin,
+  addLike,
 } from "../utils/client/db-helpers";
 import Button from "../components/button/button";
 import LittleButton from "../components/little-button/little-button";
@@ -16,8 +16,6 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import Root from "../components/root/root";
 import Log from "../components/log/log";
 import Head from "next/head";
-import Notification from "../components/notification/notification";
-import Input from '../components/input/input'
 
 function SnapLog({ userId, logs }) {
   const [logMessage, setlogMessage] = useState('');
@@ -26,7 +24,6 @@ function SnapLog({ userId, logs }) {
   const [replyMode, setReplyMode] = useState(false);
   const [replyMessage, setReplyMessage] = useState('');
   const [idOfLogToReplyTo, setIdOfLogToReplyTo] = useState(null);
-  const [win, setWin] = useState('');
   const myRef = useRef(null)
   const executeScroll = () => myRef.current.scrollIntoView();
   const handleLog = async () => {
@@ -88,21 +85,11 @@ function SnapLog({ userId, logs }) {
     }
     return childrenMatches;
   };
-  const addWinToLog = async (logId, currentWins) => {
+  const addLikeToLog = async (logId: number, currentLikes: number) => {
     if (userId) {
       setIsGenerating(true);
-      const updatedWins = currentWins ? [...currentWins, win] : [win];
-      await addWin(logId, updatedWins);
-      setUpdatedLogs(await getLogsByUserId(userId));
-      setWin('');
-      setIsGenerating(false);
-    }
-  };
-  const deleteWinFromLog = async (logId, currentWins, winToDelete) => {
-    if (userId) {
-      setIsGenerating(true);
-      const updatedWins = currentWins.filter(win => win !== winToDelete);
-      await addWin(logId, updatedWins);
+      const updatedLikes = currentLikes + 1;
+      await addLike(logId, updatedLikes);
       setUpdatedLogs(await getLogsByUserId(userId));
       setIsGenerating(false);
     }
@@ -131,11 +118,21 @@ function SnapLog({ userId, logs }) {
           />
         </LogBox>
         {
-          updatedLogs && getParentMatches().slice(0).reverse().map((log, logIdx) => {
+          updatedLogs && getParentMatches().slice(0).sort((a, b) => (a.id > b.id ? 1 : -1)).reverse().map((log, logIdx) => {
             return (
               <div key={log.id - 1}>
                 <div key={log.id}>
                   <Log
+                    likeButton={
+                      (<div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end"}}>
+                        <LittleButton onClickAction={() => addLikeToLog(log.id, log.num_of_likes)} isGenerating={false}>
+                          <> 
+                          { log.num_of_likes !== 0 && <span style={{ marginRight: "2px"}}>{log.num_of_likes}</span> }
+                          ♡
+                          </>
+                        </LittleButton>
+                      </div>)
+                    }
                     replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false}>🪃</LittleButton>}
                     deleteButton={<Button onClickAction={() => handleDelete(log.id)} isGenerating={isGenerating}>delete</Button>}
                     numOfLogs={getParentMatches().length - (logIdx)}
@@ -151,6 +148,7 @@ function SnapLog({ userId, logs }) {
                         childLog 
                           ? <Log
                               key={childLog.id}
+                              likeButton={<LittleButton onClickAction={() => addLikeToLog(childLog.id, childLog.num_of_likes)} isGenerating={false}>♡</LittleButton>}
                               replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false}>🪃</LittleButton>}
                               deleteButton={<Button onClickAction={() => handleDelete(childLog.id)} isGenerating={isGenerating}>delete</Button>}
                               numOfLogs={`${getParentMatches().length - logIdx}.${childLogIdx + 1}`}
@@ -159,44 +157,6 @@ function SnapLog({ userId, logs }) {
                               isReply={childLog.is_reply}
                             />
                           : null
-                      )
-                    })
-                  }
-                </div>
-                <div
-                  key={log.id + 2}
-                  style={{
-                    padding: "20px 15px",
-                    borderRadius: "10px",
-                    boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.1)",
-                    width: "258px",
-                  }}
-                >
-                  <Input
-                    placeholder="🎉 add a win!"
-                    value={win} 
-                    onChangeAction={(e) => setWin(e.target.value)}
-                    key={log.id + 3}
-                  />
-                  <LittleButton
-                    onClickAction={() => addWinToLog(log.id, log.wins)}
-                    isGenerating={false}
-                    key={log.id + 4}
-                  >
-                    add
-                  </LittleButton>
-                  {
-                    log.wins && log.wins.map((winMessage) => {
-                      return (
-                        <Notification key={log.id + 5}>
-                          { winMessage }
-                          <LittleButton
-                            onClickAction={() => deleteWinFromLog(log.id, log.wins, winMessage)}
-                            isGenerating={false}
-                          >
-                              🗑
-                          </LittleButton>
-                        </Notification> 
                       )
                     })
                   }

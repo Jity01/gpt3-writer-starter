@@ -139,16 +139,6 @@ export const updateFeedbackInput = async (
   });
 };
 
-export const addWin = async (logId, updatedWins) => {
-  await fetch(`${baseURL}/api/db/add-win`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ logId, updatedWins }),
-  });
-};
-
 export const insertLogsIntoVectorDB = async (userId, logs) => {
   await fetch(`${baseURL}/api/db/insert-logs-into-vector-db`, {
     method: 'POST',
