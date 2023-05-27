@@ -1,5 +1,5 @@
 import LogBox from "../components/log-box/log-box";
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   addLog,
   getUserId,
@@ -16,28 +16,29 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import Root from "../components/root/root";
 import Log from "../components/log/log";
 import Head from "next/head";
+import { getGeneration, createPromptContext } from "../utils/client/prompt-helpers";
 
 function SnapLog({ userId, logs }) {
-  const [logMessage, setlogMessage] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [logMessage, setlogMessage] = useState(``);
+  const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: false, addLike: false });
   const [updatedLogs, setUpdatedLogs] = useState([...logs]);
   const [replyMode, setReplyMode] = useState(false);
-  const [replyMessage, setReplyMessage] = useState('');
+  const [replyMessage, setReplyMessage] = useState(``);
   const [idOfLogToReplyTo, setIdOfLogToReplyTo] = useState(null);
   const myRef = useRef(null)
   const executeScroll = () => myRef.current.scrollIntoView();
   const handleLog = async () => {
     if (userId) {
-      setIsGenerating(true);
+      setIsGenerating({ ...isGenerating, addLog: true});
       await addLog(logMessage, userId, false);
       setUpdatedLogs(await getLogsByUserId(userId));
-      setlogMessage('');
-      setIsGenerating(false);
+      setlogMessage(``);
+      setIsGenerating({ ...isGenerating, addLog: false});
     }
   };
   const handleDelete = async (logId) => {
     if (userId) {
-      setIsGenerating(true);
+      setIsGenerating({ ...isGenerating, deleteLog: true});
       await deleteLog(userId, logId);
       setUpdatedLogs(await getLogsByUserId(userId));
       updatedLogs.map(async (log) => {
@@ -45,7 +46,7 @@ function SnapLog({ userId, logs }) {
           await resetReplyLogId(log.id);
         }
       })
-      setIsGenerating(false);
+      setIsGenerating({ ...isGenerating, deleteLog: false});
     }
   };
   const openReply = (logId) => {
@@ -56,19 +57,19 @@ function SnapLog({ userId, logs }) {
     }
   };
   const closeReply = async () => {
-    setIsGenerating(true);
+    setIsGenerating({ ...isGenerating, addLog: true });
     const id = await addLog(replyMessage, userId, true);
     const replyLogId = id;
     await addReplyToLog(idOfLogToReplyTo, replyLogId);
     setUpdatedLogs(await getLogsByUserId(userId));
     setReplyMode(false);
-    setReplyMessage('');
+    setReplyMessage(``);
     setIdOfLogToReplyTo(null);
-    setIsGenerating(false);
+    setIsGenerating({ ...isGenerating, addLog: false });
   };
   const cancelReply = () => {
     setReplyMode(false);
-    setReplyMessage('');
+    setReplyMessage(``);
     setIdOfLogToReplyTo(null);
   };
   const getParentMatches = () => {
@@ -87,13 +88,35 @@ function SnapLog({ userId, logs }) {
   };
   const addLikeToLog = async (logId: number, currentLikes: number) => {
     if (userId) {
-      setIsGenerating(true);
+      setIsGenerating({ ...isGenerating, addLike: true });
       const updatedLikes = currentLikes + 1;
       await addLike(logId, updatedLikes);
       setUpdatedLogs(await getLogsByUserId(userId));
-      setIsGenerating(false);
+      setIsGenerating({ ...isGenerating, addLike: false });
     }
   };
+  const generateQuestion = async (message, setMessage) => {
+    setIsGenerating({ ...isGenerating, addLog: true });
+    const promptWithContext = createPromptContext(message.slice(0, -3));
+    const generatedQuestion = await getGeneration(promptWithContext);
+    const questionToInsert = `<strong>${generatedQuestion.replace(/^\n+|\n+$/g, '').replace("<strong>", "").replace("</strong>").replace("*", "")}</strong>`;
+    setMessage(`${message.slice(0, -2)}\n${questionToInsert}\n`);
+    setIsGenerating({ ...isGenerating, addLog: false });
+  };
+  useEffect(() => {
+    if (!replyMode) {
+      if (logMessage.slice(-3, logMessage.length) === "\n\n\n") {
+        generateQuestion(logMessage, setlogMessage).then();
+      }
+    }
+  }, [logMessage]);
+  useEffect(() => {
+    if (replyMode) {
+      if (replyMessage.slice(-3, replyMessage.length) === "\n\n\n") {
+        generateQuestion(replyMessage, setReplyMessage).then();
+      }
+    }
+  }, [replyMessage])
   return (
     <Root>
       <Head>
@@ -105,18 +128,15 @@ function SnapLog({ userId, logs }) {
             replyMode
             ?
               <>
-                <Button onClickAction={closeReply} isGenerating={isGenerating}>reply</Button>
+                <Button onClickAction={closeReply} isGenerating={isGenerating.addLog}>reply</Button>
                 <Button onClickAction={cancelReply} isGenerating={false}>cancel</Button>
               </>
-            : <Button onClickAction={handleLog} isGenerating={isGenerating}>log</Button>
+            : <Button onClickAction={handleLog} isGenerating={isGenerating.addLog}>log</Button>
           }
-        >
-          <textarea
-            placeholder={replyMode ? "reply here" : "what are u thinking abt?"}
-            value={replyMode ? replyMessage : logMessage}
-            onChange={replyMode ? (e) => setReplyMessage(e.target.value) : (e) => setlogMessage(e.target.value)}
-          />
-        </LogBox>
+          placeholder={replyMode ? "reply here" : "what are u thinking abt?"}
+          value={replyMode ? replyMessage : logMessage}
+          onChange={replyMode ? (e) => setReplyMessage(`${e.target.value}`) : (e) => setlogMessage(`${e.target.value}`)}
+        />
         {
           updatedLogs && getParentMatches().slice(0).sort((a, b) => (a.id > b.id ? 1 : -1)).reverse().map((log, logIdx) => {
             return (
@@ -125,7 +145,10 @@ function SnapLog({ userId, logs }) {
                   <Log
                     likeButton={
                       (<div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end"}}>
-                        <LittleButton onClickAction={() => addLikeToLog(log.id, log.num_of_likes)} isGenerating={false}>
+                        <LittleButton
+                          onClickAction={() => addLikeToLog(log.id, log.num_of_likes)}
+                          isGenerating={false}
+                          mute={false}>
                           <> 
                           { log.num_of_likes !== 0 && <span style={{ marginRight: "2px"}}>{log.num_of_likes}</span> }
                           ♡
@@ -133,12 +156,13 @@ function SnapLog({ userId, logs }) {
                         </LittleButton>
                       </div>)
                     }
-                    replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false}>🪃</LittleButton>}
-                    deleteButton={<Button onClickAction={() => handleDelete(log.id)} isGenerating={isGenerating}>delete</Button>}
+                    replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}>🪃</LittleButton>}
+                    deleteButton={<Button onClickAction={() => handleDelete(log.id)} isGenerating={isGenerating.deleteLog}>delete</Button>}
                     numOfLogs={getParentMatches().length - (logIdx)}
                     message={log.message}
                     createdAt={log.created_at}
                     isReply={log.is_reply}
+                    reply_log_id={log.reply_log_id}
                   />
                 </div>
                 <div key={log.id + 1}>
@@ -148,13 +172,21 @@ function SnapLog({ userId, logs }) {
                         childLog 
                           ? <Log
                               key={childLog.id}
-                              likeButton={<LittleButton onClickAction={() => addLikeToLog(childLog.id, childLog.num_of_likes)} isGenerating={false}>♡</LittleButton>}
-                              replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false}>🪃</LittleButton>}
-                              deleteButton={<Button onClickAction={() => handleDelete(childLog.id)} isGenerating={isGenerating}>delete</Button>}
+                              likeButton={
+                                <LittleButton onClickAction={() => addLikeToLog(childLog.id, childLog.num_of_likes)} isGenerating={false} mute={false}>
+                                  <> 
+                                    { childLog.num_of_likes !== 0 && <span style={{ marginRight: "2px"}}>{childLog.num_of_likes}</span> }
+                                    ♡
+                                  </>
+                                </LittleButton>
+                              }
+                              replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}>🪃</LittleButton>}
+                              deleteButton={<Button onClickAction={() => handleDelete(childLog.id)} isGenerating={isGenerating.deleteLog}>delete</Button>}
                               numOfLogs={`${getParentMatches().length - logIdx}.${childLogIdx + 1}`}
                               message={childLog.message}
                               createdAt={childLog.created_at}
                               isReply={childLog.is_reply}
+                              reply_log_id={childLog.reply_log_id}
                             />
                           : null
                       )

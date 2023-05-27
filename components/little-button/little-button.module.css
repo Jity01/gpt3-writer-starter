@@ -15,3 +15,8 @@
 .button:active {
     background-color: #f97b90;
 }
+
+.mute {
+    opacity: 0.5;
+    pointer-events: none;
+}

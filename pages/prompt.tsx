@@ -118,7 +118,7 @@ function Prompt({ userId }) {
                           display: 'flex',
                           justifyContent: 'flex-end'
                         }}>
-                        <LittleButton isGenerating={isGenerating} onClickAction={() => handleDislike(match)}>👎</LittleButton>
+                        <LittleButton isGenerating={isGenerating} onClickAction={() => handleDislike(match)} mute={false}>👎</LittleButton>
                       </div>
                       <p><h3>~~match #{idx + 1}~~</h3></p>
                       <p
