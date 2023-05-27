@@ -1,0 +1,22 @@
+.button {
+    width: fit-content;
+    border: 1px solid #8b8787;
+    box-shadow: none;
+    background-color: transparent;
+    border-radius: 5px;
+    padding: 8px 20px;
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: #FFAEBC;
+}
+
+.button:active {
+    background-color: #f97b90;
+}
+
+.mute {
+    opacity: 0.5;
+    pointer-events: none;
+}
