@@ -1,7 +1,7 @@
 import styles from './log.module.css';
 import months from '../../utils/constants/months.json';
 
-function Log({ likeButton, replyButton, deleteButton, reply_log_id, numOfLogs, message, createdAt, isReply }) {
+function Log({ likeButton, replyButton, deleteButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
   const formateDate = (date) => {
     const year = date.substring(0, 4);
     const month = months[date.substring(5, 7)];
@@ -31,6 +31,7 @@ function Log({ likeButton, replyButton, deleteButton, reply_log_id, numOfLogs, m
       <div className={styles.buttonContainer}>
         { replyButton }
         { likeButton }
+        { dislikeButton }
       </div>
       <div>
         { formatMessage(message).map(messageDiv => messageDiv) }

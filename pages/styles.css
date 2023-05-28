@@ -199,12 +199,11 @@ textarea, input {
 
 ::-webkit-scrollbar {
     background-color: #A0E7E5;
-    width: 5px;
+    width: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: hsl(0, 0%, 40%);
-    border-radius: 10px;
+    background-color: hsl(0, 0%, 22%);
 }
 
 @media (min-width: 810px) and (max-width: 1199px) {

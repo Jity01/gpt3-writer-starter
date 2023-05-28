@@ -1,17 +1,10 @@
 import PropTypes from 'prop-types';
 import styles from './title.module.css';
 
-function Title({ title, subtitle }) {
+function Title({ title, onClickAction }) {
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.headerTitle}>
-          <h1>{title}</h1>
-        </div>
-        <div className={styles.headerSubtitle}>
-          <h2>{subtitle}</h2>
-        </div>
-      </div>
+      <button onClick={onClickAction} className={styles.btn}></button>
     </div>
   );
 }

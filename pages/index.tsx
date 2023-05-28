@@ -25,7 +25,7 @@ export async function getServerSideProps(context) {
   const { req, res } = context;
   const session = await getServerSession(req, res, authOptions);
   if (session) {
-    return { redirect: { destination: '/dashboard' } };
+    return { redirect: { destination: '/snaplog' } };
   }
   const providers = await getProviders();
   return {

@@ -1,67 +1,20 @@
-.container {
-    display: flex;
-    place-content: center flex-start;
-    align-items: center;
-    flex: 0 0 auto;
-    flex-flow: column nowrap;
-    gap: 10px;
-    height: fit-content;
-    max-width: 975px;
-    overflow: auto;
+.btn {
+    border: 2px solid #c3ecef;
+    border-radius: 29% 71% 66% 34% / 30% 31% 69% 70%;
+    background: linear-gradient(261deg,#5ca2e4,#892f34,#ef0781, #15b2c0 ,#ebb347);
+    animation: gradient-animation 2s ease infinite;
+    background-size: 300% 300%;
     padding: 50px;
-    position: relative;
-    width: auto;
-    gap: 64px;
 }
-
-.header {    
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    color: hsl(0, 0%, 20%);
-}
-
-.headerTitle {
-    display: flex;
-    gap: 12px;
-}
-
-.headerTitle h1 {
-    width: 100%;
-    font-weight: 700;
-    font-size: 72px;
-    letter-spacing: -4px;
-    line-height: 1.2em;
-    text-align: center;
-    margin: 0;
-}
-
-.headerSubtitle h2 {
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1.4em;
-    color: hsl(0, 0%, 20%);
-}
-
-@media (max-width: 600px) {
-    .container {
-        max-width: 400px;
-        width: 100%;
+  
+@keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
     }
-
-    .headerTitle h1 {
-        font-size: 50px;
+    50% {
+      background-position: 100% 50%;
     }
-
-    .headerSubtitle h2 {
-        text-align: center;
-    }   
-}
-
-@media (max-width: 500px) {
-    .headerTitle h1 {
-        font-size: 40px;
+    100% {
+      background-position: 0% 50%;
     }
 }

@@ -30,7 +30,7 @@ export const queryFeedbackVectorDB = async (userId: number, inputVector: Array<n
   };
 
   let match;
-  if (!pineconeResult.matches) {
+  if (!pineconeResult.matches || pineconeResult.matches.length === 0) {
     match = null;
   } else if (pineconeResult.matches[0].score < 0.99) {
     match = null;
