@@ -202,7 +202,10 @@ function SnapLog({ userId, logs }) {
       <Head>
         <title>snaplog</title>
       </Head>
-      <Title title="snaplog" onClickAction={() => setIsSearching(!isSearching)}/>
+      <br />
+      <Title title="snaplog" onClickAction={() => setIsSearching(!isSearching)} isSearching={isSearching} />
+      <div ref={myRef}></div>
+      <br />
         <LogBox
           button={
             replyMode
@@ -237,6 +240,8 @@ function SnapLog({ userId, logs }) {
                 : (e) => setlogMessage(`${e.target.value}`)
           }
         />
+        <br />
+        <br />
         {
           currentLogs && getParentMatches(currentLogs).map((log, logIdx) => {
             return (
@@ -250,13 +255,18 @@ function SnapLog({ userId, logs }) {
                           isGenerating={false}
                           mute={false}>
                           <> 
-                            { log.num_of_likes !== 0 && <span style={{ marginRight: "2px"}}>{log.num_of_likes}</span> }
-                            ♡
+                            {
+                              log.num_of_likes !== 0
+                                ? log.num_of_likes > 9
+                                  ? <>{new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span style={{ marginRight: "2px"}}>🍀</span>)}+</>
+                                  : new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span style={{ marginRight: "2px"}}>🍀</span>)
+                                : <>🍀?</>
+                            }
                           </>
                         </LittleButton>
                       </div>)
                     }
-                    replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}>🪃</LittleButton>}
+                    replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}>🪡</LittleButton>}
                     deleteButton={<Button onClickAction={() => handleDelete(log.id)} isGenerating={isGenerating.deleteLog}>delete</Button>}
                     numOfLogs={getParentMatches(currentLogs).length - (logIdx)}
                     message={log.message}
@@ -284,10 +294,10 @@ function SnapLog({ userId, logs }) {
                                   likeButton={<LittleButton onClickAction={() => addLikeToLog(childLog.id, childLog.num_of_likes)} isGenerating={false} mute={false}>
                                     <>
                                       {childLog.num_of_likes !== 0 && <span style={{ marginRight: "2px" }}>{childLog.num_of_likes}</span>}
-                                      ♡
+                                      🫶
                                     </>
                                   </LittleButton>}
-                                  replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}>🪃</LittleButton>}
+                                  replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}>🪡</LittleButton>}
                                   deleteButton={<Button onClickAction={() => handleDelete(childLog.id)} isGenerating={isGenerating.deleteLog}>delete</Button>}
                                   numOfLogs={`${getParentMatches(currentLogs).length - logIdx}.${childLogIdx + 1}`}
                                   message={childLog.message}

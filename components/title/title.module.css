@@ -1,12 +1,16 @@
 .btn {
-    border: 2px solid #c3ecef;
-    border-radius: 29% 71% 66% 34% / 30% 31% 69% 70%;
-    background: linear-gradient(261deg,#5ca2e4,#892f34,#ef0781, #15b2c0 ,#ebb347);
-    animation: gradient-animation 2s ease infinite;
-    background-size: 300% 300%;
-    padding: 50px;
+  border-radius: 29% 71% 66% 34% / 30% 31% 69% 70%;
+  background: linear-gradient(261deg, hsl(0, 0%, 0%),hsl(161, 51%, 57%), hsl(0, 0%, 0%));
+  animation: gradient-animation 4s ease infinite;
+  background-size: 300% 300%;
+  padding: 70px;
+  border: none;
 }
-  
+
+.isSearching {
+  opacity: 0.4;
+}
+
 @keyframes gradient-animation {
     0% {
       background-position: 0% 50%;

@@ -5,15 +5,17 @@
     background-color: transparent;
     border-radius: 5px;
     padding: 8px 20px;
+    color: hsl(240, 100%, 98%);
+    max-width: 120px;
 }
 
 .button:hover {
     cursor: pointer;
-    background-color: #FFAEBC;
+    background-color: hsl(160, 51%, 16%);
 }
 
 .button:active {
-    background-color: #f97b90;
+    background-color: hsl(160, 51%, 9%);
 }
 
 .mute {

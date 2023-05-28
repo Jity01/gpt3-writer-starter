@@ -11,15 +11,11 @@ function LogBox({ placeholder, value, onChange, button }) {
   }
   return (
     <div className={styles.container}>
-      <div className={styles.innerContainer}>
-        <div className={styles.parallelogram}>
           <textarea
             placeholder={placeholder}
             value={formatValue(value)}
             onChange={onChange}
           />
-          </div>
-      </div>
         { button }
     </div>
   );

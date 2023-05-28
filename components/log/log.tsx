@@ -17,7 +17,7 @@ function Log({ likeButton, replyButton, deleteButton, reply_log_id, numOfLogs, m
      return (
         chunck.startsWith("**")
           ? (
-              <p>
+              <p style={{ color: "hsl(126, 71%, 48%)"}}>
                 <strong>{chunck.substring(2, chunck.length - 2)}</strong>
               </p>
             )

@@ -3,7 +3,7 @@
 }
 
 .button {
-    background-color: #FBE7C6;
+    background-color: hsl(161, 51%, 57%);
     border-radius: 5px;
     border: 3px solid black;
     padding: 20px 50px;
@@ -16,11 +16,11 @@
 }
 
 .button:hover {
-    background-color: #FFAEBC;
+    background-color: hsl(161, 51%, 45%);
 }
 
 .button:active {
-    background-color: #fc8195;
+    background-color: hsl(161, 51%, 38%);
 }
 
 .loading {

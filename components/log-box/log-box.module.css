@@ -3,64 +3,36 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 3px solid #9eeeed;
-    box-shadow: 0px 2px 1px 1px rgba(0, 0, 0, 0.1);
     padding: 15px 8px;
     white-space: pre-wrap;
 }
 
-.parallelogram {
-    width: 300px;
-    min-height: 150px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 20px;
-}
-
-.output-container {
-    padding: 6px;
-}
-
 .container textarea {
-    border: 5px solid #fcc4cd;
-    box-shadow: 0px 0px 10px 0px #FFAEBC;
+    box-shadow: 2px -3px hsl(148, 70%, 60%);
     width: 300px;
     display: block;
     box-sizing: border-box;
     height: 180px;
     border-radius: 10px;
-    padding: 10px;
+    padding: 18px;
     font-size: 1rem;
-    background-color: #a3f7f4;
+    background-color: transparent;
     max-width: 300px;
     min-width: 300px;
 }
 
 .container textarea:focus {
     outline: none;
-    border: 0.9px solid #fcc4cd;
-}
-
-.innerContainer {
-    border: 3px solid #FBE7C6;
-    border-radius: 15px;
+    border: 3px solid hsl(160, 51%, 32%);
 }
 
 @media (max-width: 600px) {
     .container {
-        width: 280px;
-    }
-
-    .parallelogram {
-        width: 270px;
+        width: 300px;
     }
 
     .container textarea {
-        width: 270px;
-        box-shadow: 0px 0px 10px 0px #FFAEBC;
-        min-width: 270px;
-        max-width: 270px;
+        min-width: 298px;
+        max-width: 298px;
     }
 }

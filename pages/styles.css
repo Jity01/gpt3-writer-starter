@@ -4,12 +4,13 @@ body {
     position: relative;
     margin: 0;
     font-family: 'Manrope', sans-serif;
-    background-color: #A0E7E5;
+    background-color: hsl(0, 0%, 0%);
     min-height: 95vh;
-    border: 20px dashed hsl(0, 0%, 20%);
+    color: hsl(240, 100%, 98%);
+    /* border: 20px dashed hsl(0, 0%, 20%); */
 }
 
-.prompt-container {
+/* .prompt-container {
     place-content: flex-end center;
     align-items: center;
     display: flex;
@@ -19,9 +20,9 @@ body {
     height: min-content;
     padding: 0px;
     width: min-content;
-}
+} */
 
-.prompt-box {
+/* .prompt-box {
     border-bottom-width: 1px;
     border-color: rgba(255, 255, 255, 0.1);
     box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.1);
@@ -55,45 +56,47 @@ body {
     color: hsl(0, 0%, 20%);
     text-decoration: none;
     text-transform: none;
-}
+} */
 
 textarea, input {
     font-family: 'Manrope', sans-serif;
+    caret-color: hsl(240, 100%, 98%);
+    color:hsl(240, 100%, 98%);
 }
 
-
+/* 
 .prompt-box:focus {
     border-color:hsl(0, 0%, 20%);
-}
+} */
 
-.key-stroke {
+/* .key-stroke {
     outline: none;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     flex-shrink: 0;
     transform: none;
-}
+} */
 
-.key-stroke p {
+/* .key-stroke p {
     color: rgba(255, 255, 255, 0.75);
     flex: 0 0 auto;
     height: auto;
     position: relative;
     white-space: pre;
     width: auto;
-}
+} */
 
-.or {
+/* .or {
     outline: none;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     flex-shrink: 0;
     transform: none;
-}
+} */
 
-.or p {
+/* .or p {
     color: rgba(255, 255, 255, 0.25)
 }
 
@@ -104,9 +107,9 @@ textarea, input {
     justify-content: flex-start;
     flex-shrink: 0;
     transform: none;
-}
+} */
 
-.generate p {
+/* .generate p {
     color: rgb(255, 255, 255);
     margin: 0;
 }
@@ -117,37 +120,37 @@ textarea, input {
 
 .grow:hover {
     transform: scale(1.1);
-}
-
+} */
+/* 
 .output {
     place-content: center flex-start;
     align-items: center;
     display: flex;
     flex: 0 0 auto;
     flex-flow: column nowrap;
-    /* gap: 10px; */
+    gap: 10px;
     height: min-content;
     max-width: 1200px;
     overflow: hidden;
     position: relative;
     width: 100%;
-}
+} */
 
-.output-header-container {
+/* .output-header-container {
     place-content: center;
     align-items: center;
     display: flex;
     flex: 0 0 auto;
     flex-flow: column nowrap;
-    /* gap: 16px; */
+    gap: 16px;
     height: min-content;
     overflow: hidden;
     padding: 0px;
     position: relative;
     width: 100%;
-}
+} */
 
-.output-header h3 {
+/* .output-header h3 {
     font-family: "Manrope", serif;
     font-size: 28px;
     font-style: normal;
@@ -169,17 +172,17 @@ textarea, input {
     border-radius: 10%;
     padding: 10px;
     margin-bottom: 8px;
-}
+} */
 
-.output-header button:hover {
+/* .output-header button:hover {
     background-color: #FBE7C6;
 }
 
 .output-header button:active {
     background-color: hsl(350, 100%, 84%);
-}
+} */
 
-.output-content {
+/* .output-content {
     outline: none;
     display: flex;
     padding: 10px;
@@ -195,19 +198,19 @@ textarea, input {
     text-align: start;
     white-space: pre-line;
     color: hsl(0, 0%, 20%);
-}
+} */
 
 ::-webkit-scrollbar {
-    background-color: #A0E7E5;
-    width: 10px;
+    width: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: hsl(0, 0%, 22%);
+    border-radius: 2px;
 }
 
 @media (min-width: 810px) and (max-width: 1199px) {
-    .container {
+    /* .container {
         max-width: 600px;
         width: 100%;
     }
@@ -219,11 +222,11 @@ textarea, input {
 
     .prompt-box {
         width: 100%;
-    }
+    } */
 }
 
 @media (max-width: 809px) {
-    .container {
+    /* .container {
         max-width: 500px;
         width: 100%;
     }
@@ -235,11 +238,11 @@ textarea, input {
 
     .prompt-box {
         width: 100%;
-    }
+    } */
 }
 
 @media (max-width: 600px) {
-    .key-stroke, .or {
+    /* .key-stroke, .or {
         display: none;
     }
 
@@ -250,7 +253,7 @@ textarea, input {
 
     .prompt-box {
         width: 100%;
-    }
+    } */
 }
 
 @keyframes rotation {
