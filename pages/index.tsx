@@ -310,7 +310,7 @@ function SnapLog({ userId, logs, providers }) {
                     createdAt={log.created_at}
                     isReply={log.is_reply}
                     reply_log_id={log.reply_log_id}
-                    dislikeButton={isSearching
+                    dislikeButton={isSearching && rawMatches.length > 0
                       ? <LittleButton
                           onClickAction={() => handleDislike(rawMatches.find((m) => m.metadata.logMessage === log.message))}
                           isGenerating={isGenerating.dislikeSearch}
