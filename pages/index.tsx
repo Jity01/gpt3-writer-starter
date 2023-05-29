@@ -32,7 +32,12 @@ import React from "react";
 function SnapLog({ userId, logs, providers }) {
   const [logMessage, setlogMessage] = useState(``);
   const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: false, addLike: false, searchLogs: false, dislikeSearch: false });
-  const [updatedLogs, setUpdatedLogs] = useState(!logs ? [] : [...logs].slice(0).sort((a, b) => (a.id > b.id ? 1 : -1)).reverse());
+  const [updatedLogs, setUpdatedLogs] = useState(!logs ? [] : [...logs].slice(0).sort((a, b) => {
+    if (a.num_of_likes === b.num_of_likes) {
+      return a.id > b.id ? 1 : -1;
+    }
+    return a.num_of_likes > b.num_of_likes ? 1 : -1;
+    }).reverse());
   const [replyMode, setReplyMode] = useState(false);
   const [replyMessage, setReplyMessage] = useState(``);
   const [idOfLogToReplyTo, setIdOfLogToReplyTo] = useState(null);
@@ -54,7 +59,12 @@ function SnapLog({ userId, logs, providers }) {
     const names: any[] = session?.user?.name?.split(" ") as any[];
     userId = await getUserId(names[0], names[1], session?.user?.email);
     logs = await getLogsByUserId(userId);
-    setUpdatedLogs(logs.slice(0).sort((a, b) => (a.id > b.id ? 1 : -1)).reverse());
+    setUpdatedLogs(logs.slice(0).sort((a, b) => {
+      if (a.num_of_likes === b.num_of_likes) {
+        return a.id > b.id ? 1 : -1;
+      }
+      return a.num_of_likes > b.num_of_likes ? 1 : -1;
+      }).reverse());
     setCurrUserId(userId);
   };
   const handleLog = async () => {
@@ -62,7 +72,12 @@ function SnapLog({ userId, logs, providers }) {
       setIsGenerating({ ...isGenerating, addLog: true});
       await addLog(logMessage, userId, false);
       const newLogs = await getLogsByUserId(userId);
-      setUpdatedLogs(newLogs.slice(0).sort((a, b) => (a.id > b.id ? 1 : -1)).reverse());
+      setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
+        if (a.num_of_likes === b.num_of_likes) {
+          return a.id > b.id ? 1 : -1;
+        }
+        return a.num_of_likes > b.num_of_likes ? 1 : -1;
+        }).reverse());
       setlogMessage(``);
       setIsGenerating({ ...isGenerating, addLog: false});
     } else {
@@ -75,7 +90,12 @@ function SnapLog({ userId, logs, providers }) {
       setIsGenerating({ ...isGenerating, deleteLog: true});
       await deleteLog(userId, logId);
       const newLogs = await getLogsByUserId(userId);
-      setUpdatedLogs(newLogs.slice(0).sort((a, b) => (a.id > b.id ? 1 : -1)).reverse());
+      setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
+        if (a.num_of_likes === b.num_of_likes) {
+          return a.id > b.id ? 1 : -1;
+        }
+        return a.num_of_likes > b.num_of_likes ? 1 : -1;
+        }).reverse());
       updatedLogs?.map(async (log) => {
         if (log.reply_log_id === logId) {
           await resetReplyLogId(log.id);
@@ -100,7 +120,12 @@ function SnapLog({ userId, logs, providers }) {
     const replyLogId = id;
     await addReplyToLog(idOfLogToReplyTo, replyLogId);
     const newLogs = await getLogsByUserId(userId);
-    setUpdatedLogs(newLogs.slice(0).sort((a, b) => (a.id > b.id ? 1 : -1)).reverse());
+    setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
+      if (a.num_of_likes === b.num_of_likes) {
+        return a.id > b.id ? 1 : -1;
+      }
+      return a.num_of_likes > b.num_of_likes ? 1 : -1;
+      }).reverse());
     setReplyMode(false);
     setReplyMessage(``);
     setIdOfLogToReplyTo(null);
@@ -131,7 +156,12 @@ function SnapLog({ userId, logs, providers }) {
       const updatedLikes = currentLikes + 1;
       await addLike(logId, updatedLikes);
       const newLogs = await getLogsByUserId(userId);
-      setUpdatedLogs(newLogs.slice(0).sort((a, b) => (a.id > b.id ? 1 : -1)).reverse());
+      setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
+      if (a.num_of_likes === b.num_of_likes) {
+        return a.id > b.id ? 1 : -1;
+      }
+      return a.num_of_likes > b.num_of_likes ? 1 : -1;
+      }).reverse());
       setIsGenerating({ ...isGenerating, addLike: false });
     }
   };

@@ -1,8 +1,8 @@
 // TODO: fix undefined urls (v volatile)
 
 // const baseURL = process.env.NODE_ENV === 'production' ? process.env.PROD_BASEURL : process.env.DEV_BASEURL;
-// const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://reinfrc.com'
-const baseURL = "https://reinfrc.com"
+const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://reinfrc.com'
+// const baseURL = "https://reinfrc.com"
 
 export const addLog = async (logMessage: string, userId: number, isReply: boolean) => {
   const response = await fetch(`${baseURL}/api/db/add-log`, {
