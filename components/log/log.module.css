@@ -23,7 +23,7 @@
 }
 
 .isReply {
-    border-top: 18px solid #dda1dc;
+    border-top: 5px solid hsl(240, 100%, 96%);
     margin-left: 10px;
     width: 290px;
 }

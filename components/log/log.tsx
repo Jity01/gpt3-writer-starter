@@ -1,5 +1,6 @@
 import styles from './log.module.css';
 import months from '../../utils/constants/months.json';
+import React from 'react';
 
 function Log({ likeButton, replyButton, deleteButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
   const formateDate = (date) => {

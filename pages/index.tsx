@@ -329,9 +329,14 @@ function SnapLog({ userId, logs, providers }) {
                                 ? <Log
                                   key={childLog.id}
                                   likeButton={<LittleButton onClickAction={() => addLikeToLog(childLog.id, childLog.num_of_likes)} isGenerating={false} mute={false}>
-                                    <>
-                                      {childLog.num_of_likes !== 0 && <span style={{ marginRight: "2px" }}>{childLog.num_of_likes}</span>}
-                                      🫶
+                                    <> 
+                                      {
+                                        childLog.num_of_likes !== 0
+                                          ? childLog.num_of_likes > 9
+                                            ? <>{new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
+                                            : new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
+                                          : <>🍀?</>
+                                      }
                                     </>
                                   </LittleButton>}
                                   replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}>🪡</LittleButton>}
