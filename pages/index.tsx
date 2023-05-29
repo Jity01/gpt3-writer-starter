@@ -228,7 +228,6 @@ function SnapLog({ userId, logs, providers }) {
     if (session) {
       const names: any[] = session.user?.name?.split(" ") as any[];
       const id = getUserId(names[0], names[1], session.user?.email);
-      console.log(id)
       id.then((res) => {
         if (res === -1) addUser(names[0], names[1], session?.user?.email);
       });
@@ -296,8 +295,8 @@ function SnapLog({ userId, logs, providers }) {
                             {
                               log.num_of_likes !== 0
                                 ? log.num_of_likes > 9
-                                  ? <>{new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span style={{ marginRight: "2px"}}>🍀</span>)}+</>
-                                  : new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span style={{ marginRight: "2px"}}>🍀</span>)
+                                  ? <>{new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
+                                  : new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
                                 : <>🍀?</>
                             }
                           </>
