@@ -357,9 +357,12 @@ function SnapLog({ userId, logs, providers }) {
         <br />
     <br />
     <br />
-    <div style={{ width: "300px", marginLeft: "auto", marginRight: "auto" }}>
-      <Button onClickAction={() => signOut()} isGenerating={false}>sign out</Button>
-    </div>
+    {
+      currUserId && 
+      <div style={{ width: "300px", marginLeft: "auto", marginRight: "auto" }}>
+        <Button onClickAction={() => signOut()} isGenerating={false}>sign out</Button>
+      </div>
+    }
     </Root>
   );
 }
