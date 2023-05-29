@@ -5,8 +5,8 @@ import Google from 'next-auth/providers/google';
 export const authOptions = {
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
     // Twitter({
     //   clientId: process.env.TWITTER_CONSUMER_KEY,
@@ -14,9 +14,6 @@ export const authOptions = {
     // }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: '/sign-in',
-  },
 };
 
 export default NextAuth(authOptions);

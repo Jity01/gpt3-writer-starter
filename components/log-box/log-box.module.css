@@ -9,7 +9,6 @@
 
 .container textarea {
     box-shadow: 2px -3px hsl(148, 70%, 60%);
-    width: 300px;
     display: block;
     box-sizing: border-box;
     height: 180px;
@@ -17,8 +16,8 @@
     padding: 18px;
     font-size: 1rem;
     background-color: transparent;
-    max-width: 300px;
-    min-width: 300px;
+    max-width: 328px;
+    min-width: 328px;
 }
 
 .container textarea:focus {
