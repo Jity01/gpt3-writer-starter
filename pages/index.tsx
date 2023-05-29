@@ -113,7 +113,6 @@ function SnapLog({ userId, logs, providers }) {
   };
   const getParentMatches = (logs) => {
     const parentMatches = logs.filter(log => log && log.is_reply === false);
-    console.log("parents", parentMatches)
     return parentMatches;
   };
   const getChildrenMatchesOfLog = (log, logs) => {
