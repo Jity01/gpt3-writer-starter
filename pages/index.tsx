@@ -112,14 +112,15 @@ function SnapLog({ userId, logs, providers }) {
     setIdOfLogToReplyTo(null);
   };
   const getParentMatches = (logs) => {
-    const parentMatches = logs.filter(log => log.is_reply === false);
+    const parentMatches = logs.filter(log => log && log.is_reply === false);
+    console.log("parents", parentMatches)
     return parentMatches;
   };
   const getChildrenMatchesOfLog = (log, logs) => {
     const childrenMatches: any = [];
     let currentLog = log;
     while (currentLog && currentLog.reply_log_id) {
-      const childMatch = logs.find(log => log.id === currentLog.reply_log_id);
+      const childMatch = logs.find(log => log && log.id === currentLog.reply_log_id);
       childrenMatches.push(childMatch);
       currentLog = childMatch;
     }
