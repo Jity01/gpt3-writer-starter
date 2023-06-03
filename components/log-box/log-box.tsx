@@ -1,9 +1,10 @@
+import React from 'react';
 import styles from './log-box.module.css';
 
 function LogBox({ placeholder, value, onChange, button }) {
   const formatValue = (message: string) => {
     const messageArray = message.split(`\n`);
-    const finalMessageChuncks = [];
+    const finalMessageChuncks: string[] = [];
     messageArray.forEach((chunck) => {
       finalMessageChuncks.push(chunck.replace(/<\/?strong>/g, '**'));
     });

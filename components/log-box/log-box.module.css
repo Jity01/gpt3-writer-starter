@@ -18,11 +18,12 @@
     background-color: transparent;
     max-width: 328px;
     min-width: 328px;
+    min-height: 210px;
 }
 
 .container textarea:focus {
     outline: none;
-    border: 3px solid hsl(160, 51%, 32%);
+    border: 1px solid hsl(160, 51%, 32%);
 }
 
 @media (max-width: 600px) {

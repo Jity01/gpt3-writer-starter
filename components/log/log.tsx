@@ -2,7 +2,7 @@ import styles from './log.module.css';
 import months from '../../utils/constants/months.json';
 import React from 'react';
 
-function Log({ likeButton, replyButton, deleteButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
+function Log({ talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, likeButton, replyButton, deleteButton, talkButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
   const formateDate = (date) => {
     const year = date.substring(0, 4);
     const month = months[date.substring(5, 7)];
@@ -26,22 +26,47 @@ function Log({ likeButton, replyButton, deleteButton, reply_log_id, numOfLogs, m
       );
   })
   return messageDivs;
-};
+  };
+  const formatValue = (message: string) => {
+    const messageArray = message.split(`\n`);
+    const finalMessageChuncks: string[] = [];
+    messageArray.forEach((chunck) => {
+      finalMessageChuncks.push(chunck.replace(/<\/?strong>/g, '**'));
+    });
+    return finalMessageChuncks.join(`\n`);
+  }
   return (
     <div className={isReply ? `${styles.container} ${styles.isReply}` : styles.container }>
-      <div className={styles.buttonContainer}>
-        { replyButton }
-        { likeButton }
-        { dislikeButton }
-      </div>
-      <div>
-        { formatMessage(message).map(messageDiv => messageDiv) }
-      </div>
-      <div className={styles.subInfo}>
-        <p>🪵 log #{numOfLogs}</p>
-        <p>⏳ created at: {formateDate(createdAt)}</p>
-        { deleteButton }
-      </div>
+      { talkMode && message === choseValueToTalkTo ? (
+        <>
+          <div className={`${styles.singularButton} ${styles.buttonContainer}`}>
+            { talkButton }
+          </div>
+          <textarea
+            className={styles.textarea}
+            value={formatValue(talkMessage.message)}
+            onChange={(e) => setTalkMessage({ ...talkMessage, message: e.target.value })}
+            placeholder='talk to me :)'
+          />
+        </>
+      ) :
+      <>
+        <div className={styles.buttonContainer}>
+          { replyButton }
+          { likeButton }
+          { dislikeButton }
+          { talkButton }
+        </div>
+        <div>
+          { formatMessage(message).map(messageDiv => messageDiv) }
+        </div>
+        <div className={styles.subInfo}>
+          <p>🪵 log #{numOfLogs}</p>
+          <p>⏳ created at: {formateDate(createdAt)}</p>
+          { deleteButton }
+        </div>
+      </>
+    }
     </div>
   );
 }

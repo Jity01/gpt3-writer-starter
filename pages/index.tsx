@@ -18,7 +18,7 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import Root from "../components/root/root";
 import Log from "../components/log/log";
 import Head from "next/head";
-import { getGeneration, createPromptContext } from "../utils/client/prompt-helpers";
+import { getGeneration, createPromptContext, createTalkToMePrompt} from "../utils/client/prompt-helpers";
 import Title from "../components/title/title";
 import { stringifyOutputEmbeddings, unstringifyOutputEmbeddings } from "../utils/api/output-stringifier";
 import {
@@ -31,7 +31,7 @@ import React from "react";
 
 function SnapLog({ userId, logs, providers }) {
   const [logMessage, setlogMessage] = useState(``);
-  const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: false, addLike: false, searchLogs: false, dislikeSearch: false });
+  const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: { id: -1, isDeleting: false }, addLike: { id: -1, isAdding: false }, searchLogs: false, dislikeSearch: false, talkGeneration: false });
   const [updatedLogs, setUpdatedLogs] = useState(!logs ? [] : [...logs].slice(0).sort((a, b) => {
     if (a.num_of_likes === b.num_of_likes) {
       return a.id > b.id ? 1 : -1;
@@ -47,6 +47,8 @@ function SnapLog({ userId, logs, providers }) {
   const [matches, setMatches] = useState(updatedLogs);
   const [rawMatches, setRawMatches]: any[] = useState([]);
   const [currUserId, setCurrUserId] = useState(userId);
+  const [talkMessage, setTalkMessage] = useState({ message: ``, valueToTalkTo: ``});
+  const [talkMode, setTalkMode] = useState(false);
   const myRef: any = useRef(null)
   const currentLogs = isSearching ? matches : updatedLogs;
   const executeScroll = () => myRef.current?.scrollIntoView();
@@ -87,7 +89,7 @@ function SnapLog({ userId, logs, providers }) {
   };
   const handleDelete = async (logId) => {
     if (currUserId) {
-      setIsGenerating({ ...isGenerating, deleteLog: true});
+      setIsGenerating({ ...isGenerating, deleteLog: { id: logId, isDeleting: true }});
       await deleteLog(userId, logId);
       const newLogs = await getLogsByUserId(userId);
       setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
@@ -101,7 +103,7 @@ function SnapLog({ userId, logs, providers }) {
           await resetReplyLogId(log.id);
         }
       })
-      setIsGenerating({ ...isGenerating, deleteLog: false});
+      setIsGenerating({ ...isGenerating, deleteLog: { id: -1, isDeleting: false }});
     } else {
       await signUserIn();
       await setUserCredentials();
@@ -152,7 +154,7 @@ function SnapLog({ userId, logs, providers }) {
   };
   const addLikeToLog = async (logId: number, currentLikes: number) => {
     if (currUserId) {
-      setIsGenerating({ ...isGenerating, addLike: true });
+      setIsGenerating({ ...isGenerating, addLike: { id: logId, isAdding: true } });
       const updatedLikes = currentLikes + 1;
       await addLike(logId, updatedLikes);
       const newLogs = await getLogsByUserId(userId);
@@ -162,7 +164,7 @@ function SnapLog({ userId, logs, providers }) {
       }
       return a.num_of_likes > b.num_of_likes ? 1 : -1;
       }).reverse());
-      setIsGenerating({ ...isGenerating, addLike: false });
+      setIsGenerating({ ...isGenerating, addLike: { id: -1, isAdding: false } });
     }
   };
   const generateQuestion = async (message, setMessage) => {
@@ -172,6 +174,21 @@ function SnapLog({ userId, logs, providers }) {
     const questionToInsert = `<strong>${generatedQuestion.replace(/^\n+|\n+$/g, '').replace("<strong>", "").replace("</strong>").replace("*", "")}</strong>`;
     setMessage(`${message.slice(0, -2)}\n${questionToInsert}\n`);
     setIsGenerating({ ...isGenerating, addLog: false });
+  };
+  const generateQuestionForTalkToMe = async () => {
+    setIsGenerating({ ...isGenerating, talkGeneration: true });
+    const promptWithContext = createTalkToMePrompt(talkMessage.valueToTalkTo, talkMessage.message.slice(0, -3));
+    const generatedQuestion = await getGeneration(promptWithContext);
+    const questionToInsert = `<strong>${generatedQuestion.replace(/^\n+|\n+$/g, '').replace("<strong>", "").replace("</strong>").replace("*", "")}</strong>`;
+    setTalkMessage({ ...talkMessage, message: `${talkMessage.message.slice(0, -2)}\n${questionToInsert}\n` });
+    setIsGenerating({ ...isGenerating, talkGeneration: false });
+  };
+  const getFullLogMessage = (log, logs) => {
+    const firstMessage = log.message;
+    const replyLogs = getChildrenMatchesOfLog(log, logs);
+    const replyMessages = replyLogs.map(replyLog => replyLog.message);
+    const fullMessage = [firstMessage, ...replyMessages].join("\n");
+    return fullMessage;
   };
   const customIncludes = (arr, val) => {
     for (let i = 0; i < arr.length; i++) {
@@ -215,6 +232,20 @@ function SnapLog({ userId, logs, providers }) {
       await setUserCredentials();
     }
   }
+  const handleTalk = async (log, logs) => {
+    if (currUserId) {
+      if (talkMode) {
+        setTalkMode(false);
+        setTalkMessage({ valueToTalkTo: ``, message: `` });
+      } else {
+        setTalkMode(true);
+        setTalkMessage({ valueToTalkTo: getFullLogMessage(log, logs), message: `` });
+      }
+    } else {
+      await signUserIn();
+      await setUserCredentials();
+    }
+  };
   const handleDislike = async (match) => {
     // TODO: turn match to matches (handle general inputs of this type)
     setIsGenerating({ ...isGenerating, dislikeSearch: true });
@@ -254,6 +285,13 @@ function SnapLog({ userId, logs, providers }) {
       }
     }
   }, [searchMessage]);
+  useEffect(() => {
+    if (talkMode) {
+      if (talkMessage.message.slice(-3, talkMessage.message.length) === "\n\n\n") {
+        generateQuestionForTalkToMe().then();
+      }
+    }
+  }, [talkMessage.message]);
   useEffect(() => {
     if (session) {
       const names: any[] = session.user?.name?.split(" ") as any[];
@@ -315,11 +353,25 @@ function SnapLog({ userId, logs, providers }) {
                 <div key={log.id}>
                   <Log
                     key={log.id + 99}
-                    likeButton={
-                      (<div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end"}}>
+                    talkMessage={talkMessage}
+                    setTalkMessage={setTalkMessage}
+                    talkButton={(
+                      <LittleButton
+                        onClickAction={() => {
+                          handleTalk(log, currentLogs);
+                          setTalkMode(!talkMode);
+                        }}
+                        isGenerating={isGenerating.talkGeneration && talkMessage.valueToTalkTo === log.message}
+                        mute={false}>
+                        talk
+                      </LittleButton>
+                    )}
+                    talkMode={talkMode}
+                    likeButton={(
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end"}}>
                         <LittleButton
                           onClickAction={() => addLikeToLog(log.id, log.num_of_likes)}
-                          isGenerating={false}
+                          isGenerating={isGenerating.addLike.id === log.id && isGenerating.addLike.isAdding}
                           mute={false}>
                           <> 
                             {
@@ -331,15 +383,25 @@ function SnapLog({ userId, logs, providers }) {
                             }
                           </>
                         </LittleButton>
-                      </div>)
-                    }
+                      </div>
+                    )}
                     replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}>🪡</LittleButton>}
-                    deleteButton={<Button onClickAction={() => handleDelete(log.id)} isGenerating={isGenerating.deleteLog}>delete</Button>}
+                    deleteButton={(
+                      <Button
+                        onClickAction={() => handleDelete(log.id)}
+                        isGenerating={
+                          isGenerating.deleteLog.id === log.id && isGenerating.deleteLog.isDeleting
+                        }
+                      >
+                        delete
+                      </Button>
+                    )}
                     numOfLogs={getParentMatches(currentLogs).length - (logIdx)}
                     message={log.message}
                     createdAt={log.created_at}
                     isReply={log.is_reply}
                     reply_log_id={log.reply_log_id}
+                    choseValueToTalkTo={talkMessage.valueToTalkTo}
                     dislikeButton={isSearching && rawMatches.length > 0
                       ? <LittleButton
                           onClickAction={() => handleDislike(rawMatches.find((m) => m.metadata.logMessage === log.message))}
@@ -358,19 +420,47 @@ function SnapLog({ userId, logs, providers }) {
                               childLog
                                 ? <Log
                                   key={childLog.id}
-                                  likeButton={<LittleButton onClickAction={() => addLikeToLog(childLog.id, childLog.num_of_likes)} isGenerating={false} mute={false}>
-                                    <> 
-                                      {
-                                        childLog.num_of_likes !== 0
-                                          ? childLog.num_of_likes > 9
-                                            ? <>{new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
-                                            : new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
-                                          : <>🍀?</>
-                                      }
-                                    </>
-                                  </LittleButton>}
+                                  talkMessage={talkMessage}
+                                  setTalkMessage={setTalkMessage}
+                                  talkButton={(
+                                    <LittleButton
+                                      onClickAction={() => {
+                                        handleTalk(log, currentLogs);
+                                        setTalkMode(!talkMode);
+                                      }}
+                                      isGenerating={isGenerating.talkGeneration && talkMessage.valueToTalkTo === childLog.message}
+                                      mute={false}>
+                                      talk
+                                    </LittleButton>
+                                  )}
+                                  likeButton={(
+                                    <LittleButton
+                                      onClickAction={() => addLikeToLog(childLog.id, childLog.num_of_likes)}
+                                      isGenerating={isGenerating.addLike.id === childLog.id && isGenerating.addLike.isAdding}
+                                      mute={false}
+                                    >
+                                      <> 
+                                        {
+                                          childLog.num_of_likes !== 0
+                                            ? childLog.num_of_likes > 9
+                                              ? <>{new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
+                                              : new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 9 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
+                                            : <>🍀?</>
+                                        }
+                                      </>
+                                    </LittleButton>
+                                  )}
+                                  talkMode={talkMode}
+                                  choseValueToTalkTo={talkMessage.valueToTalkTo}
                                   replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}>🪡</LittleButton>}
-                                  deleteButton={<Button onClickAction={() => handleDelete(childLog.id)} isGenerating={isGenerating.deleteLog}>delete</Button>}
+                                  deleteButton={(
+                                    <Button
+                                      onClickAction={() => handleDelete(childLog.id)}
+                                      isGenerating={isGenerating.deleteLog.id === childLog.id && isGenerating.deleteLog.isDeleting}
+                                    >
+                                      delete
+                                    </Button>
+                                  )}
                                   numOfLogs={`${getParentMatches(currentLogs).length - logIdx}.${childLogIdx + 1}`}
                                   message={childLog.message}
                                   createdAt={childLog.created_at}

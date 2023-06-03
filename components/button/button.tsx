@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import PropTypes from 'prop-types';
 import styles from './button.module.css';
+import React from 'react';
 
 function Button({ onClickAction, isGenerating, children }) {
   return (

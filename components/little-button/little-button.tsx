@@ -1,3 +1,4 @@
+import React from 'react';
 import styles from './little-button.module.css';
 
 function LittleButton({ mute, onClickAction, isGenerating, children }) {
@@ -5,10 +6,10 @@ function LittleButton({ mute, onClickAction, isGenerating, children }) {
     <div className={!mute ? styles.container : `${styles.container} ${styles.mute}`}>
       <button
         type="button"
-        className={`${styles.button}`}
+        className={isGenerating ? `${styles.button} ${styles.loading}` : `${styles.button}`}
         onClick={!mute ? onClickAction : null}
       >
-        { children }
+        { isGenerating ? <span className={styles.loader} /> : children }
       </button>
     </div>
   );
