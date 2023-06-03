@@ -17,6 +17,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Root from "../components/root/root";
 import Log from "../components/log/log";
+import Alert from "../components/alert/alert";
 import Head from "next/head";
 import { getGeneration, createPromptContext, createTalkToMePrompt} from "../utils/client/prompt-helpers";
 import Title from "../components/title/title";
@@ -49,6 +50,7 @@ function SnapLog({ userId, logs, providers }) {
   const [currUserId, setCurrUserId] = useState(userId);
   const [talkMessage, setTalkMessage] = useState({ message: ``, valueToTalkTo: ``});
   const [talkMode, setTalkMode] = useState(false);
+  const [alerts, setAlerts]: any[] = useState([]);
   const myRef: any = useRef(null)
   const currentLogs = isSearching ? matches : updatedLogs;
   const executeScroll = () => myRef.current?.scrollIntoView();
@@ -71,21 +73,30 @@ function SnapLog({ userId, logs, providers }) {
   };
   const handleLog = async () => {
     if (currUserId) {
-      setIsGenerating({ ...isGenerating, addLog: true});
-      await addLog(logMessage, userId, false);
-      const newLogs = await getLogsByUserId(userId);
-      setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
-        if (a.num_of_likes === b.num_of_likes) {
-          return a.id > b.id ? 1 : -1;
-        }
-        return a.num_of_likes > b.num_of_likes ? 1 : -1;
-        }).reverse());
-      setlogMessage(``);
-      setIsGenerating({ ...isGenerating, addLog: false});
+      if (logMessage.length > 0) {
+        setIsGenerating({ ...isGenerating, addLog: true});
+        await addLog(logMessage, userId, false);
+        const newLogs = await getLogsByUserId(userId);
+        setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
+          if (a.num_of_likes === b.num_of_likes) {
+            return a.id > b.id ? 1 : -1;
+          }
+          return a.num_of_likes > b.num_of_likes ? 1 : -1;
+          }).reverse());
+        setlogMessage(``);
+        setIsGenerating({ ...isGenerating, addLog: false});
+      } else {
+        setAlerts([...alerts, { message: `you can not enter an empty log`, type: `error` }]);
+      }
     } else {
       await signUserIn();
       await setUserCredentials();
     }
+  };
+  const handleCloseAlert = (index) => {
+    const newAlerts = [...alerts];
+    newAlerts.splice(index, 1);
+    setAlerts(newAlerts);
   };
   const handleDelete = async (logId) => {
     if (currUserId) {
@@ -117,21 +128,25 @@ function SnapLog({ userId, logs, providers }) {
     }
   };
   const closeReply = async () => {
-    setIsGenerating({ ...isGenerating, addLog: true });
-    const id = await addLog(replyMessage, userId, true);
-    const replyLogId = id;
-    await addReplyToLog(idOfLogToReplyTo, replyLogId);
-    const newLogs = await getLogsByUserId(userId);
-    setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
-      if (a.num_of_likes === b.num_of_likes) {
-        return a.id > b.id ? 1 : -1;
-      }
-      return a.num_of_likes > b.num_of_likes ? 1 : -1;
-      }).reverse());
-    setReplyMode(false);
-    setReplyMessage(``);
-    setIdOfLogToReplyTo(null);
-    setIsGenerating({ ...isGenerating, addLog: false });
+    if (replyMessage.length > 0) {
+      setIsGenerating({ ...isGenerating, addLog: true });
+      const id = await addLog(replyMessage, userId, true);
+      const replyLogId = id;
+      await addReplyToLog(idOfLogToReplyTo, replyLogId);
+      const newLogs = await getLogsByUserId(userId);
+      setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
+        if (a.num_of_likes === b.num_of_likes) {
+          return a.id > b.id ? 1 : -1;
+        }
+        return a.num_of_likes > b.num_of_likes ? 1 : -1;
+        }).reverse());
+      setReplyMode(false);
+      setReplyMessage(``);
+      setIdOfLogToReplyTo(null);
+      setIsGenerating({ ...isGenerating, addLog: false });
+    } else {
+      setAlerts([...alerts, { message: `you can not enter an empty reply`, type: `error` }]);
+    }
   };
   const cancelReply = () => {
     setReplyMode(false);
@@ -208,25 +223,31 @@ function SnapLog({ userId, logs, providers }) {
   }
   const handleSearch = async () => {
     if (currUserId) {
-      setIsGenerating({ ...isGenerating, searchLogs: true });
-      const data = await queryVectorDB(userId, searchMessage);
-      const inputData = await queryFeedbackVectorDB(userId, data.inputVector)
-      let matchToSet = [] as any;
-      if (inputData.match) {
-        const outputs = [] as any;
-        for (let i = 0; i < inputData.match.metadata.outputs.length; i++) {
-          outputs.push(unstringifyOutputEmbeddings(inputData.match.metadata.outputs[i]));
+      if (searchMessage.length > 0 && currentLogs.length > 10) {
+        setIsGenerating({ ...isGenerating, searchLogs: true });
+        const data = await queryVectorDB(userId, searchMessage);
+        const inputData = await queryFeedbackVectorDB(userId, data.inputVector)
+        let matchToSet = [] as any;
+        if (inputData.match) {
+          const outputs = [] as any;
+          for (let i = 0; i < inputData.match.metadata.outputs.length; i++) {
+            outputs.push(unstringifyOutputEmbeddings(inputData.match.metadata.outputs[i]));
+          }
+          const dislikedMatches = data.scoredVectors.filter(m => customIncludes(outputs, m.values));
+          matchToSet = data.scoredVectors.filter(m => !customIncludes(outputs, m.values));
+          dislikedMatches.forEach(m => matchToSet.push(m));
+        } else {
+          matchToSet = data.scoredVectors;
         }
-        const dislikedMatches = data.scoredVectors.filter(m => customIncludes(outputs, m.values));
-        matchToSet = data.scoredVectors.filter(m => !customIncludes(outputs, m.values));
-        dislikedMatches.forEach(m => matchToSet.push(m));
-      } else {
-        matchToSet = data.scoredVectors;
+        setRawMatches(matchToSet);
+        setMatches(matchToSet.map((m) => updatedLogs?.find((log) => log.message === m.metadata.logMessage)))
+        setIsGenerating({ ...isGenerating, searchLogs: false });
+        setSearchInputVector(data.inputVector);
+      } else if (searchMessage.length === 0) {
+        setAlerts([...alerts, { message: `you can not run an empty search`, type: `error` }]);
+      } else if (currentLogs.length === 0) {
+        setAlerts([...alerts, { message: `you must enter at least 10 logs to search`, type: `error` }]);
       }
-      setRawMatches(matchToSet);
-      setMatches(matchToSet.map((m) => updatedLogs?.find((log) => log.message === m.metadata.logMessage)))
-      setIsGenerating({ ...isGenerating, searchLogs: false });
-      setSearchInputVector(data.inputVector);
     } else {
       await signUserIn();
       await setUserCredentials();
@@ -306,8 +327,25 @@ function SnapLog({ userId, logs, providers }) {
       <Head>
         <title>reinforce</title>
       </Head>
+      {
+        alerts.map((alert, i) => (
+          <Alert key={i} type={alert.type}>
+            <>
+              {alert.message}
+              <button
+                onClick={() => handleCloseAlert(i)}
+              >
+                x
+              </button>
+            </>
+          </Alert>
+        ))
+      }
       <br />
-      <Title onClickAction={() => setIsSearching(!isSearching)} isSearching={isSearching} />
+      <Title onClickAction={() => {
+        setIsSearching(!isSearching)
+        if (!isSearching) setAlerts([...alerts, { message: `you are now in searching mode`, type: `info` }])
+      }} isSearching={isSearching} />
       <div ref={myRef}></div>
       <br />
         <LogBox

@@ -1,0 +1,30 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 8px;
+    white-space: pre-wrap;
+    width: 310px;
+    background-color: rgb(64, 74, 149);
+    border: 1px solid rgb(222, 250, 218);
+}
+
+.error {
+    background-color: rgb(149, 64, 64);
+}
+
+.container button {
+    border: none;
+    background-color: transparent;
+    color: hsl(240, 100%, 98%);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0px;
+    margin: 0px;
+}
+
+.container button:focus {
+    outline: none;
+    border: 1px solid rgb(222, 250, 218);
+    padding: 0 2px;
+}
