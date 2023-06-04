@@ -2,15 +2,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 7px 8px;
+    padding: 7px 15px;
     white-space: pre-wrap;
     width: 310px;
-    background-color: rgb(64, 74, 149);
-    border: 1px solid rgb(222, 250, 218);
+    border: 1px solid rgb(64, 74, 149);
+    border-radius: 10px;
 }
 
 .error {
-    background-color: rgb(149, 64, 64);
+    border: 1px solid rgb(149, 64, 64);
 }
 
 .container button {
@@ -19,12 +19,11 @@
     color: hsl(240, 100%, 98%);
     font-size: 1rem;
     cursor: pointer;
-    padding: 0px;
+    padding: 0 2px;
     margin: 0px;
 }
 
 .container button:focus {
     outline: none;
     border: 1px solid rgb(222, 250, 218);
-    padding: 0 2px;
 }

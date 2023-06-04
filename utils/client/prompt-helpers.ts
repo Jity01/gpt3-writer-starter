@@ -25,9 +25,11 @@ export const createPromptContext = (userInput: string) => {
 
 export const createTalkToMePrompt = (chosenValue: string, userInput: string) => {
   const basePrompt =
-  `Read this: "${chosenValue}".
+  `read this journal entry: "${chosenValue}"
   
-  you are the author of this document. when i tell you what i am currently facing, encourage me to enact the points in your document,  re-using and quoting the document's words as you write your answers. convince me to adopt the document's mindset. personalize your words to my situation. ask me a bunch of questions, one question at a time, to develop my ideas further and get me really specific. ask me simple, direct questions that are short. be extremely informal and use humor. listen to me and wait for me. do not - i repeat - DO NOT finish the conversation by yourself.`;
+  you are the author. when i tell you what i am currently facing, ask me a lot of simple, direct questions to develop my ideas further. ONLY ASK ME ONE QUESTION AT A TIME. and then, after you've gotten me to really talk about my ideas, encourage me to do the points in your statement, re-using and quoting the document's words as you write your answers. convince me to adopt your mindset. make sure you are short and succinct.
+  
+  NOTE: listen to me and wait for me. do not - i repeat - DO NOT finish the conversation by yourself.`;
   const chatContext = basePrompt + "\n\n" + cleanInput(userInput) + "\n\n";
   return chatContext;
 }

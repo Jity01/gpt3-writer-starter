@@ -2,7 +2,7 @@ import styles from './log.module.css';
 import months from '../../utils/constants/months.json';
 import React from 'react';
 
-function Log({ talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, likeButton, replyButton, deleteButton, talkButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
+function Log({ isSearching, logMark, talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, likeButton, replyButton, deleteButton, talkButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
   const formateDate = (date) => {
     const year = date.substring(0, 4);
     const month = months[date.substring(5, 7)];
@@ -36,7 +36,7 @@ function Log({ talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, likeBu
     return finalMessageChuncks.join(`\n`);
   }
   return (
-    <div className={isReply ? `${styles.container} ${styles.isReply}` : styles.container }>
+    <div className={isReply && !isSearching ? `${styles.container} ${styles.isReply}` : styles.container }>
       { talkMode && message === choseValueToTalkTo ? (
         <>
           <div className={`${styles.singularButton} ${styles.buttonContainer}`}>
@@ -61,7 +61,7 @@ function Log({ talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, likeBu
           { formatMessage(message).map(messageDiv => messageDiv) }
         </div>
         <div className={styles.subInfo}>
-          <p>🪵 log #{numOfLogs}</p>
+          <p>🪵 {logMark} #{numOfLogs}</p>
           <p>⏳ created at: {formateDate(createdAt)}</p>
           { deleteButton }
         </div>

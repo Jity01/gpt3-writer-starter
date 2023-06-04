@@ -18,7 +18,7 @@
     background-color: transparent;
     max-width: 328px;
     min-width: 328px;
-    min-height: 210px;
+    min-height: 300px;
 }
 
 .container textarea:focus {

@@ -8,7 +8,8 @@
 }
 
 .isSearching {
-  opacity: 0.4;
+  opacity: 0.3;
+  padding: 72px;
 }
 
 @keyframes gradient-animation {
