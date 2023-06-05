@@ -414,7 +414,7 @@ function SnapLog({ userId, logs, providers }) {
                           handleTalk(log, updatedLogs);
                           setTalkMode(!talkMode);
                         }}
-                        isGenerating={isGenerating.talkGeneration && talkMessage.valueToTalkTo === log.message}
+                        isGenerating={isGenerating.talkGeneration && talkMessage.valueToTalkTo.includes(log.message)}
                         mute={false}>
                         talk
                       </LittleButton>
@@ -474,7 +474,7 @@ function SnapLog({ userId, logs, providers }) {
                                         handleTalk(log, updatedLogs);
                                         setTalkMode(!talkMode);
                                       }}
-                                      isGenerating={isGenerating.talkGeneration && talkMessage.valueToTalkTo === childLog.message}
+                                      isGenerating={isGenerating.talkGeneration && talkMessage.valueToTalkTo.includes(childLog.message)}
                                       mute={false}>
                                       talk
                                     </LittleButton>
@@ -535,7 +535,7 @@ function SnapLog({ userId, logs, providers }) {
                         handleTalk(log, updatedLogs);
                         setTalkMode(!talkMode);
                       }}
-                      isGenerating={isGenerating.talkGeneration && talkMessage.valueToTalkTo === log.message}
+                      isGenerating={isGenerating.talkGeneration && talkMessage.valueToTalkTo.includes(log.message)}
                       mute={false}>
                       talk
                     </LittleButton>
