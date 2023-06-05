@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import PropTypes from 'prop-types';
 import styles from './category.module.css';
+import React from 'react';
 
 function Category({ children }) {
   return (

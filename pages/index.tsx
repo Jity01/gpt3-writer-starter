@@ -53,7 +53,7 @@ function SnapLog({ userId, logs, providers }) {
   const [alerts, setAlerts]: any[] = useState([]);
   const myRef: any = useRef(null)
   const executeScroll = () => myRef.current?.scrollIntoView();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const signUserIn = async () => {
     await signIn("google");
   };
