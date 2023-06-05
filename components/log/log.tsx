@@ -37,7 +37,7 @@ function Log({ isSearching, logMark, talkMessage, setTalkMessage, choseValueToTa
   }
   return (
     <div className={isReply && !isSearching ? `${styles.container} ${styles.isReply}` : styles.container }>
-      { talkMode && message === choseValueToTalkTo ? (
+      { talkMode && choseValueToTalkTo.includes(message) && !isReply ? (
         <>
           <div className={`${styles.singularButton} ${styles.buttonContainer}`}>
             { talkButton }
@@ -55,7 +55,7 @@ function Log({ isSearching, logMark, talkMessage, setTalkMessage, choseValueToTa
           { replyButton }
           { likeButton }
           { dislikeButton }
-          { talkButton }
+          { !isReply && talkButton }
         </div>
         <div>
           { formatMessage(message).map(messageDiv => messageDiv) }
