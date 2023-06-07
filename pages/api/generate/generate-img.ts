@@ -7,7 +7,7 @@ const generateAction = async (req, res) => {
     "init_image": imgURL,
     "width": "512",
     "height": "512",
-    "samples": "1",
+    "samples": "4",
     "num_inference_steps": "30",
     "safety_checker": "no",
     "enhance_prompt": "yes",
@@ -26,7 +26,6 @@ const generateAction = async (req, res) => {
     redirect: 'follow'
   });
   const resJSON = await response.json();
-  console.log(resJSON);
   const { output } = resJSON;
   res.status(200).json({ images: output });
 };

@@ -189,20 +189,44 @@ function SnapLog({ userId, logs, providers }) {
     }
   };
   const generateQuestion = async (message, setMessage) => {
-    setIsGenerating({ ...isGenerating, addLog: true });
-    const promptWithContext = createPromptContext(message.slice(0, -3));
-    const generatedQuestion = await getGeneration(promptWithContext);
-    const questionToInsert = `<strong>${generatedQuestion.replace(/^\n+|\n+$/g, '').replace("<strong>", "").replace("</strong>").replace("*", "")}</strong>`;
-    setMessage(`${message.slice(0, -2)}\n${questionToInsert}\n`);
-    setIsGenerating({ ...isGenerating, addLog: false });
+    if (currUserId) {
+      setIsGenerating({ ...isGenerating, addLog: true });
+      const promptWithContext = createPromptContext(message.slice(0, -3));
+      const generatedQuestion = await getGeneration(promptWithContext);
+      const questionToInsert = `<strong>${generatedQuestion.replace(/^\n+|\n+$/g, '').replace("<strong>", "").replace("</strong>").replace("*", "")}</strong>`;
+      setMessage(`${message.slice(0, -2)}\n${questionToInsert}\n`);
+      setIsGenerating({ ...isGenerating, addLog: false });
+    } else {
+      await signUserIn();
+      await setUserCredentials();
+    }
   };
   const generateQuestionForTalkToMe = async () => {
     setIsGenerating({ ...isGenerating, talkGeneration: true });
-    const promptWithContext = createTalkToMePrompt(talkMessage.valueToTalkTo, talkMessage.message.slice(0, -3));
+    const formattedTalkMessage = formatTalkMessage(talkMessage.message.slice(0, -3));
+    const promptWithContext = createTalkToMePrompt(talkMessage.valueToTalkTo, formattedTalkMessage);
     const generatedQuestion = await getGeneration(promptWithContext);
     const questionToInsert = `<strong>${generatedQuestion.replace(/^\n+|\n+$/g, '').replace("<strong>", "").replace("</strong>").replace("*", "")}</strong>`;
     setTalkMessage({ ...talkMessage, message: `${talkMessage.message.slice(0, -2)}\n${questionToInsert}\n` });
     setIsGenerating({ ...isGenerating, talkGeneration: false });
+  };
+  const formatTalkMessage = (message) => {
+    let newMsgArr = message.split("\n");
+    let isMeTurn = true;
+    for (let i = 0; i < newMsgArr.length; i++) {
+      if (newMsgArr[i] !== "") {
+        if (isMeTurn) {
+          newMsgArr[i] = "me: " + newMsgArr[i];
+          isMeTurn = false;
+        } else {
+          newMsgArr[i] = "you: " + newMsgArr[i].replace(/\*/g, "");
+          isMeTurn = true;
+        }
+      }
+    }
+    newMsgArr.push("");
+    newMsgArr.push("you:");
+    return newMsgArr.join("\n");
   };
   const getFullLogMessage = (log, logs) => {
     const firstMessage = log.message;
@@ -320,7 +344,7 @@ function SnapLog({ userId, logs, providers }) {
     }
   }, [searchMessage]);
   useEffect(() => {
-    if (talkMode) {
+    if (talkMode && !isGenerating.talkGeneration) {
       if (talkMessage.message.slice(-3, talkMessage.message.length) === "\n\n\n") {
         generateQuestionForTalkToMe().then();
       }
@@ -429,9 +453,9 @@ function SnapLog({ userId, logs, providers }) {
                           <> 
                             {
                               log.num_of_likes !== 0
-                                ? log.num_of_likes > 4
-                                  ? <>{new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 4 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
-                                  : new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 4 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
+                                ? log.num_of_likes > 3
+                                  ? <>{new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 3 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
+                                  : new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 3 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
                                 : <>🍀?</>
                             }
                           </>
@@ -488,9 +512,9 @@ function SnapLog({ userId, logs, providers }) {
                                       <> 
                                         {
                                           childLog.num_of_likes !== 0
-                                            ? childLog.num_of_likes > 4
-                                              ? <>{new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 4 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
-                                              : new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 4 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
+                                            ? childLog.num_of_likes > 3
+                                              ? <>{new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 3 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
+                                              : new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 3 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
                                             : <>🍀?</>
                                         }
                                       </>
@@ -549,9 +573,9 @@ function SnapLog({ userId, logs, providers }) {
                       <> 
                         {
                           log.num_of_likes !== 0
-                            ? log.num_of_likes > 4
-                              ? <>{new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 4 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
-                              : new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 4 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
+                            ? log.num_of_likes > 3
+                              ? <>{new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 3 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
+                              : new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 3 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
                             : <>🍀?</>
                         }
                       </>

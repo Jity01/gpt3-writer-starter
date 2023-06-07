@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import LittleButton from '../little-button/little-button';
 import { generateImg } from '../../utils/client/prompt-helpers';
 import { saveImg } from '../../utils/client/db-helpers';
+import { getLinkFromCloudinary } from '../../utils/client/cloudinary-helpers';
 
 function Canvas({ logId, userId }) {
   const [canvasCtx, setCanvasCtx]: any = useState(null);
@@ -27,8 +28,8 @@ function Canvas({ logId, userId }) {
     ctx.beginPath();
     ctx.moveTo(mouseData.x, mouseData);
     setMouseData({
-        x: e.clientX,
-        y: e.clientY
+      x: e.clientX,
+      y: e.clientY
     });
     ctx.lineTo(e.clientX, e.clientY);
     ctx.strokeStyle = color;
@@ -37,18 +38,17 @@ function Canvas({ logId, userId }) {
     ctx.stroke();
   };
   const generate = async () => {
+    if (mouseData.x === null && mouseData.y === null) return;
     const canvas = canvasRef.current;
     const image = canvas.toDataURL("image/png");
-    const images = await generateImg("finish the drawing", image);
+    const publicallyAccessibleLink = await getPublicallyAccessibleLink(image);
+    const images = await generateImg(publicallyAccessibleLink, "finish the drawing");
     setGeneratedImages(images);
   };
-  const save = () => {
-    const canvas = canvasRef.current;
-    const image = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.download = "my-image.png";
-    link.href = image;
-    link.click();
+  const getPublicallyAccessibleLink = async (dataURI: string) => {
+    const url = `https://api.cloudinary.com/v1_1/dg65si9dy/auto/upload`;
+    const link = await getLinkFromCloudinary(url, dataURI);
+    return link;
   };
   const saveGeneratedImage = async (imageURL: string) => {
     await saveImg(userId, logId, imageURL);
@@ -66,17 +66,16 @@ function Canvas({ logId, userId }) {
         onMouseDown={(e) => setPos(e)}
       />
       <div className={styles.navigation}>
-        <div className={styles.control} onClick={() => setColor("#000")} style={{ backgroundColor: "#000" }} />
         <div className={styles.control} onClick={() => setColor("aqua")} style={{ backgroundColor: "aqua" }} />
         <div className={styles.control} onClick={() => setColor("#fdec03")} style={{ backgroundColor: "#fdec03" }} />
         <div className={styles.control} onClick={() => setColor("#24d102")} style={{ backgroundColor: "#24d102" }} />
         <div className={styles.control} onClick={() => setColor("#fff")} style={{ backgroundColor: "#fff" }} />
         <div className={styles.control} onClick={() => setColor("#EF626C")} style={{ backgroundColor: "#EF626C" }} />
         <input type="range" min={1} max={50} value={size} className={styles.range} onChange={(e) => setSize(e.target.value)} />
-        <LittleButton mute={false} isGenerating={false} onClickAction={() => save()}>save</LittleButton>
         <LittleButton mute={false} isGenerating={false} onClickAction={() => {
           const ctx = canvasCtx;
           ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+          setGeneratedImages([]);
         }}>clear</LittleButton>
         <LittleButton mute={false} isGenerating={false} onClickAction={() => generate()}>generate</LittleButton>
         { generatedImages.map((imageURL, index) => (

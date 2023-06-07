@@ -15,7 +15,7 @@ function Log({ isSearching, logMark, talkMessage, setTalkMessage, choseValueToTa
   const formatMessage = (message: string) => {
     const trimmedMessage = message.split(`\n`);
     const messageDivs = trimmedMessage.map(chunck => {
-     return (
+      return (
         chunck.startsWith("**")
           ? (
               <p style={{ color: "hsl(126, 71%, 48%)"}}>
@@ -24,9 +24,10 @@ function Log({ isSearching, logMark, talkMessage, setTalkMessage, choseValueToTa
             )
           : <p>{chunck}</p>
       );
-  })
-  return messageDivs;
+    });
+    return messageDivs;
   };
+
   const formatValue = (message: string) => {
     const messageArray = message.split(`\n`);
     const finalMessageChuncks: string[] = [];
