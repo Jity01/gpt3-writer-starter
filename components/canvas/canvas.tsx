@@ -61,6 +61,29 @@ function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
   const saveGeneratedImage = async (imageURL: string) => {
     await saveImg(userId, logId, imageURL);
   };
+  const setTouchPos = (e) => {
+    if (e.touches.length !== 1) return;
+    const canvas = canvasRef.current;
+    const offset = canvas.getBoundingClientRect();
+    setMouseData({ x: e.touches[0].clientX - offset.left, y: e.touches[0].clientY - offset.top });
+  };
+  const drawTouch = (e) => {
+    if (e.touches.length !== 1) return;
+    const ctx = canvasCtx;
+    ctx.beginPath();
+    ctx.moveTo(mouseData.x, mouseData.y);
+    const canvas = canvasRef.current;
+    const offset = canvas.getBoundingClientRect();
+    setMouseData({
+      x: e.touches[0].clientX - offset.left,
+      y: e.touches[0].clientY - offset.top,
+    });
+    ctx.lineTo(e.touches[0].clientX - offset.left, e.touches[0].clientY - offset.top);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = size;
+    ctx.lineCap = "round";
+    ctx.stroke();
+  };
   useEffect(() => {
     if (saveSelectedImage) {
       saveGeneratedImage(selectedImage).then();
@@ -104,11 +127,11 @@ function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
                 }}
                 onMouseDown={(e) => setPos(e)}
                 onTouchMove={(e) => {
-                  setPos(e)
-                  draw(e)
+                  setTouchPos(e)
+                  drawTouch(e)
                 }}
-                onTouchStart={(e) => setPos(e)}
-                onTouchEnd={(e) => setPos(e)}
+                onTouchStart={(e) => setTouchPos(e)}
+                onTouchEnd={(e) => setTouchPos(e)}
               />
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <LittleButton mute={false} isGenerating={isGenerating} onClickAction={() => generate()}>generate</LittleButton>

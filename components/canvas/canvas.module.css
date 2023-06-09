@@ -15,6 +15,10 @@
     border: 1px solid hsl(240, 100%, 96%);
 }
 
+.container canvas {
+    touch-action: none;
+}
+
 .control {
     height: 30px;
     width: 30px;

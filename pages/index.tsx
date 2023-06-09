@@ -438,7 +438,12 @@ function SnapLog({ userId, logs }) {
           { drawMode && (
             <>
               <div style={{ height: "10px"}} />
-              <Canvas userId={currUserId} logId={lastLogId} saveSelectedImage={addImageToLog} setAddImageToLog={setAddImageToLog} />
+              <Canvas
+                userId={currUserId}
+                logId={lastLogId}
+                saveSelectedImage={addImageToLog}
+                setAddImageToLog={setAddImageToLog}
+              />
             </>
           ) }
         </LogBox>
