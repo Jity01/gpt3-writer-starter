@@ -103,6 +103,12 @@ function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
                   draw(e)
                 }}
                 onMouseDown={(e) => setPos(e)}
+                onTouchMove={(e) => {
+                  setPos(e)
+                  draw(e)
+                }}
+                onTouchStart={(e) => setPos(e)}
+                onTouchEnd={(e) => setPos(e)}
               />
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <LittleButton mute={false} isGenerating={isGenerating} onClickAction={() => generate()}>generate</LittleButton>
