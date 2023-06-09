@@ -1,6 +1,18 @@
+.container {
+    padding: 5px;
+    border-radius: 10px;
+}
+
 .navigation {
-    width: 300px;
-    background-color: hsl(160, 53%, 21%);
+    display: flex;
+}
+
+.container img:hover {
+    transform: scale(1.03);
+}
+
+.container img:active {
+    border: 1px solid hsl(240, 100%, 96%);
 }
 
 .control {
@@ -8,6 +20,7 @@
     width: 30px;
     border-radius: 50%;
     background-color: aqua;
+    margin: 2px;
 }
 
 .control:hover {
@@ -25,7 +38,7 @@
      appearance: none;
      background: transparent;
      cursor: pointer;
-     width: 12rem;
+     width: 10rem;
 }
  
  /* Removes default focus */
@@ -83,4 +96,3 @@
    outline: 3px solid #053a5f;
    outline-offset: 0.125rem; 
 }
- 

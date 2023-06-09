@@ -2,7 +2,7 @@ import styles from './log.module.css';
 import months from '../../utils/constants/months.json';
 import React from 'react';
 
-function Log({ isSearching, logMark, talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, likeButton, replyButton, deleteButton, talkButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
+function Log({ isSearching, imgURL, logMark, talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, likeButton, replyButton, deleteButton, talkButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
   const formateDate = (date) => {
     const year = date.substring(0, 4);
     const month = months[date.substring(5, 7)];
@@ -61,6 +61,7 @@ function Log({ isSearching, logMark, talkMessage, setTalkMessage, choseValueToTa
         <div>
           { formatMessage(message).map(messageDiv => messageDiv) }
         </div>
+        { imgURL && <img src={imgURL} alt={`generated img for log with message of ${message}`} /> } 
         <div className={styles.subInfo}>
           <p>🪵 {logMark} #{numOfLogs}</p>
           <p>⏳ created at: {formateDate(createdAt)}</p>

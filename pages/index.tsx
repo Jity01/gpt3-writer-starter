@@ -10,7 +10,7 @@ import {
   addLike,
   addUser,
 } from "../utils/client/db-helpers";
-import { getProviders, signIn, getSession, signOut, useSession } from 'next-auth/react';
+import { signIn, getSession, signOut, useSession } from 'next-auth/react';
 import Button from "../components/button/button";
 import LittleButton from "../components/little-button/little-button";
 import { getServerSession } from "next-auth";
@@ -29,8 +29,9 @@ import {
   updateFeedbackInput
 } from "../utils/client/db-helpers";
 import React from "react";
+import Canvas from "../components/canvas/canvas";
 
-function SnapLog({ userId, logs, providers }) {
+function SnapLog({ userId, logs }) {
   const [logMessage, setlogMessage] = useState(``);
   const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: { id: -1, isDeleting: false }, addLike: { id: -1, isAdding: false }, searchLogs: false, dislikeSearch: false, talkGeneration: false });
   const [updatedLogs, setUpdatedLogs] = useState(!logs ? [] : [...logs].slice(0).sort((a, b) => {
@@ -50,7 +51,10 @@ function SnapLog({ userId, logs, providers }) {
   const [currUserId, setCurrUserId] = useState(userId);
   const [talkMessage, setTalkMessage] = useState({ message: ``, valueToTalkTo: ``});
   const [talkMode, setTalkMode] = useState(false);
+  const [drawMode, setDrawMode] = useState(false);
   const [alerts, setAlerts]: any[] = useState([]);
+  const [lastLogId, setLastLogId] = useState(null);
+  const [addImageToLog, setAddImageToLog] = useState(false);
   const myRef: any = useRef(null)
   const executeScroll = () => myRef.current?.scrollIntoView();
   const { data: session } = useSession();
@@ -74,7 +78,7 @@ function SnapLog({ userId, logs, providers }) {
     if (currUserId) {
       if (logMessage.length > 0) {
         setIsGenerating({ ...isGenerating, addLog: true});
-        await addLog(logMessage, userId, false);
+        setLastLogId(await addLog(logMessage, userId, false));
         const newLogs = await getLogsByUserId(userId);
         setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
           if (a.num_of_likes === b.num_of_likes) {
@@ -83,9 +87,10 @@ function SnapLog({ userId, logs, providers }) {
           return a.num_of_likes > b.num_of_likes ? 1 : -1;
           }).reverse());
         setlogMessage(``);
+        setAddImageToLog(true);
         setIsGenerating({ ...isGenerating, addLog: false});
       } else {
-        setAlerts([...alerts, { message: `you can not enter an empty log`, type: `error` }]);
+        setAlerts([...alerts, { message: `you can not log an empty message`, type: `error` }]);
       }
     } else {
       await signUserIn();
@@ -131,6 +136,7 @@ function SnapLog({ userId, logs, providers }) {
       setIsGenerating({ ...isGenerating, addLog: true });
       const id = await addLog(replyMessage, userId, true);
       const replyLogId = id;
+      setLastLogId(id);
       await addReplyToLog(idOfLogToReplyTo, replyLogId);
       const newLogs = await getLogsByUserId(userId);
       setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
@@ -140,6 +146,7 @@ function SnapLog({ userId, logs, providers }) {
         return a.num_of_likes > b.num_of_likes ? 1 : -1;
         }).reverse());
       setReplyMode(false);
+      setAddImageToLog(true);
       setReplyMessage(``);
       setIdOfLogToReplyTo(null);
       setIsGenerating({ ...isGenerating, addLog: false });
@@ -151,6 +158,7 @@ function SnapLog({ userId, logs, providers }) {
     setReplyMode(false);
     setReplyMessage(``);
     setIdOfLogToReplyTo(null);
+    setAddImageToLog(false);
   };
   const getParentMatches = (logs) => {
     const parentMatches = logs.filter(log => log && log.is_reply === false);
@@ -389,13 +397,21 @@ function SnapLog({ userId, logs, providers }) {
           button={
             replyMode
             ?
-              <>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "10px" }}>
+                <br />
+                <Button onClickAction={() => {setDrawMode(!drawMode)}} isGenerating={false}>draw</Button>
                 <Button onClickAction={closeReply} isGenerating={isGenerating.addLog}>reply</Button>
                 <Button onClickAction={cancelReply} isGenerating={false}>cancel</Button>
-              </>
+              </div>
             : isSearching
               ? <Button onClickAction={handleSearch} isGenerating={isGenerating.searchLogs}>search</Button>
-              : <Button onClickAction={handleLog} isGenerating={isGenerating.addLog}>log</Button>
+              : (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "10px" }}>
+                    <br />
+                    <Button onClickAction={() => {setDrawMode(!drawMode)}} isGenerating={false}>draw</Button>
+                    <Button onClickAction={handleLog} isGenerating={isGenerating.addLog}>log{" "}{" "}</Button>
+                  </div>
+              )
           }
           placeholder={
             replyMode
@@ -418,7 +434,14 @@ function SnapLog({ userId, logs, providers }) {
                 ? (e) => setSearchMessage(`${e.target.value}`)
                 : (e) => setlogMessage(`${e.target.value}`)
           }
-        />
+        >
+          { drawMode && (
+            <>
+              <div style={{ height: "10px"}} />
+              <Canvas userId={currUserId} logId={lastLogId} saveSelectedImage={addImageToLog} setAddImageToLog={setAddImageToLog} />
+            </>
+          ) }
+        </LogBox>
         <br />
         <br />
         {
@@ -432,6 +455,7 @@ function SnapLog({ userId, logs, providers }) {
                     isSearching={isSearching}
                     talkMessage={talkMessage}
                     setTalkMessage={setTalkMessage}
+                    imgURL={log.imgurl}
                     talkButton={(
                       <LittleButton
                         onClickAction={() => {
@@ -491,6 +515,7 @@ function SnapLog({ userId, logs, providers }) {
                                   key={childLog.id}
                                   talkMessage={talkMessage}
                                   isSearching={isSearching}
+                                  imgURL={childLog.imgurl}
                                   setTalkMessage={setTalkMessage}
                                   talkButton={(
                                     <LittleButton
@@ -552,6 +577,7 @@ function SnapLog({ userId, logs, providers }) {
                   key={log.id}
                   isSearching={isSearching}
                   talkMessage={talkMessage}
+                  imgURL={log.imgurl}
                   setTalkMessage={setTalkMessage}
                   talkButton={(
                     <LittleButton
@@ -631,14 +657,13 @@ export async function getServerSideProps(context) {
   let logs = null;
   const session = await getServerSession(req, res, authOptions);
   if (!session) {
-    const providers = await getProviders();
-    return { props: { userId: null, logs: null, providers } };
+    return { props: { userId: null, logs: null } };
   } else {
     const names: any[] = session?.user?.name?.split(" ") as any[];
     userId = await getUserId(names[0], names[1], session?.user?.email);
     logs = await getLogsByUserId(userId);
   }
-  return { props: { session, userId, logs, providers: null } };
+  return { props: { session, userId, logs } };
 }
 
 export default SnapLog;
