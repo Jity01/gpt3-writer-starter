@@ -49,7 +49,7 @@ function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
     const canvas = canvasRef.current;
     const image = canvas.toDataURL("image/png");
     const publicallyAccessibleLink = await getPublicallyAccessibleLink(image);
-    const images = await generateImg(publicallyAccessibleLink, "finish the drawing");
+    const images = await generateImg(publicallyAccessibleLink, "atmospheric");
     setGeneratedImages(images);
     setIsGenerating(false);
   };
