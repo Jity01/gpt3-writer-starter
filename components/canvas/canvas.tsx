@@ -92,22 +92,24 @@ function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
       setGeneratedImages([]);
     }
   }, [saveSelectedImage]);
+  const selectImage = (url) => {
+    if (selectedImage === url) {
+      setSelectedImage(null);
+      return;
+    }
+    setSelectedImage(url);
+  };
   return (
     <div className={styles.container}>
       {
         generatedImages.length > 0
           ? (
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                { generatedImages.map((imageURL, index) => (
-                  <img
-                    key={index}
-                    src={imageURL}
-                    alt="generated"
-                    onClick={() => setSelectedImage(imageURL)}
-                    style={{ border: imageURL === selectedImage ? "2px solid white" : "none" }}
-                  />
-                )) }
-              </div>
+              <>
+                {/* <div><img src={generatedImages[0]} onClick={() => selectImage(generatedImages[0])} style={{ border: generatedImages[0] === selectedImage ? "2px solid white" : "none" }} /></div> */}
+                <div><img src={generatedImages[1]} onClick={() => selectImage(generatedImages[1])} style={{ border: generatedImages[1] === selectedImage ? "2px solid white" : "none" }} /></div>
+                <div><img src={generatedImages[2]} onClick={() => selectImage(generatedImages[2])} style={{ border: generatedImages[2] === selectedImage ? "2px solid white" : "none" }}/></div>
+                <div><img src={generatedImages[3]} onClick={() => selectImage(generatedImages[3])} style={{ border: generatedImages[3] === selectedImage ? "2px solid white" : "none" }}/></div>
+              </>
             )
           : (
             <>
