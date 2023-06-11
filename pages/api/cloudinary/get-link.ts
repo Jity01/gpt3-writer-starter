@@ -4,6 +4,7 @@ const getLink = async (req, res) => {
   fd.append("file", dataURI);
   fd.append("cloud_name", process.env.CLOUDINARY_NAME || "");
   fd.append("upload_preset", process.env.CLOUDINARY_UPLOAD_PRESET || "");
+  console.log('fd', fd)
   const response = await fetch(url, {
     method: 'POST',
     body: fd,
