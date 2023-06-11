@@ -2,7 +2,7 @@ import styles from './log.module.css';
 import months from '../../utils/constants/months.json';
 import React from 'react';
 
-function Log({ isSearching, imgURL, logMark, talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, likeButton, replyButton, deleteButton, talkButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
+function Log({ replyRef, isSearching, imgURL, logMark, talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, likeButton, replyButton, deleteButton, talkButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
   const formateDate = (date) => {
     const year = date.substring(0, 4);
     const month = months[date.substring(5, 7)];
@@ -27,7 +27,6 @@ function Log({ isSearching, imgURL, logMark, talkMessage, setTalkMessage, choseV
     });
     return messageDivs;
   };
-
   const formatValue = (message: string) => {
     const messageArray = message.split(`\n`);
     const finalMessageChuncks: string[] = [];
@@ -37,26 +36,27 @@ function Log({ isSearching, imgURL, logMark, talkMessage, setTalkMessage, choseV
     return finalMessageChuncks.join(`\n`);
   }
   return (
-    <div className={isReply && !isSearching ? `${styles.container} ${styles.isReply}` : styles.container }>
-      { talkMode && choseValueToTalkTo.includes(message) && !isReply ? (
+    <div ref={replyRef} className={isReply ? `${styles.container} ${styles.isReply}` : styles.container }>
+      { talkMode && choseValueToTalkTo.includes(message) ? (
         <>
+          <textarea
+            className={styles.textarea}
+            style={isReply ? window.innerWidth < 600 ? { minWidth: "190px", maxWidth: "190px" } : { minWidth: "221px", maxWidth: "221px" } : {}}
+            value={formatValue(talkMessage.message)}
+            onChange={(e) => setTalkMessage({ ...talkMessage, message: e.target.value })}
+            placeholder={'talk to me :)'}
+          />
           <div className={`${styles.singularButton} ${styles.buttonContainer}`}>
             { talkButton }
           </div>
-          <textarea
-            className={styles.textarea}
-            value={formatValue(talkMessage.message)}
-            onChange={(e) => setTalkMessage({ ...talkMessage, message: e.target.value })}
-            placeholder='talk to me :)'
-          />
         </>
       ) :
       <>
         <div className={styles.buttonContainer}>
           { replyButton }
           { likeButton }
+          { deleteButton }
           { dislikeButton }
-          { !isReply && talkButton }
         </div>
         <div>
           { formatMessage(message).map(messageDiv => messageDiv) }
@@ -65,7 +65,7 @@ function Log({ isSearching, imgURL, logMark, talkMessage, setTalkMessage, choseV
         <div className={styles.subInfo}>
           <p>🪵 {logMark} #{numOfLogs}</p>
           <p>⏳ created at: {formateDate(createdAt)}</p>
-          { deleteButton }
+          { talkButton }
         </div>
       </>
     }
