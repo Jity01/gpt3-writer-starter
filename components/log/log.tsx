@@ -1,8 +1,10 @@
 import styles from './log.module.css';
 import months from '../../utils/constants/months.json';
-import React from 'react';
+import React, { useState } from 'react';
+import { BsPlay } from 'react-icons/bs';
 
-function Log({ replyRef, isSearching, imgURL, logMark, talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, likeButton, replyButton, deleteButton, talkButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
+function Log({ musicLink, replyRef, isSearching, imgURL, logMark, talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, replyButton, deleteButton, talkButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
+  const [isPlaying, setIsPlaying] = useState(false);
   const formateDate = (date) => {
     const year = date.substring(0, 4);
     const month = months[date.substring(5, 7)];
@@ -34,9 +36,20 @@ function Log({ replyRef, isSearching, imgURL, logMark, talkMessage, setTalkMessa
       finalMessageChuncks.push(chunck.replace(/<\/?strong>/g, '**'));
     });
     return finalMessageChuncks.join(`\n`);
-  }
+  };
+  const generateContainerClass = () => {
+    if (isReply && musicLink && !isPlaying) return `${styles.container} ${styles.isReply} ${styles.hasMusic}`;
+    if (isReply) return `${styles.container} ${styles.isReply}`;
+    if (musicLink && !isPlaying) return `${styles.container} ${styles.hasMusic}`;
+    return styles.container;
+  };
+  const generatePlayButtonClass = () => {
+    if (!isPlaying && musicLink) return `${styles.playButton} ${styles.hasMusic}`;
+    return styles.playButton;
+  };
   return (
-    <div ref={replyRef} className={isReply ? `${styles.container} ${styles.isReply}` : styles.container }>
+    <div ref={replyRef} className={generateContainerClass()}>
+      { musicLink && <BsPlay size="45px" className={generatePlayButtonClass()} onClick={() => setIsPlaying(!isPlaying)} /> }
       { talkMode && choseValueToTalkTo.includes(message) ? (
         <>
           <textarea
@@ -54,10 +67,19 @@ function Log({ replyRef, isSearching, imgURL, logMark, talkMessage, setTalkMessa
       <>
         <div className={styles.buttonContainer}>
           { replyButton }
-          { likeButton }
           { deleteButton }
           { dislikeButton }
         </div>
+        { isPlaying && musicLink &&
+          <>
+            <br />
+            <iframe
+              height={"300"}
+              src={musicLink}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              frameBorder="0"
+            />
+          </> }
         <div>
           { formatMessage(message).map(messageDiv => messageDiv) }
         </div>

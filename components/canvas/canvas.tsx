@@ -4,6 +4,7 @@ import LittleButton from '../little-button/little-button';
 import { generateImg } from '../../utils/client/prompt-helpers';
 import { saveImg } from '../../utils/client/db-helpers';
 import { getLinkFromCloudinary } from '../../utils/client/cloudinary-helpers';
+import { RiDeleteBin2Line } from 'react-icons/ri';
 
 function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
   const [canvasCtx, setCanvasCtx]: any = useState(null);
@@ -17,8 +18,8 @@ function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
-    context.canvas.width = 310;
-    context.canvas.height = 310;
+    context.canvas.width = 300;
+    context.canvas.height = 300;
     setCanvasCtx(context);
   }, []);
   const setPos = (e) => {
@@ -100,56 +101,56 @@ function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
     setSelectedImage(url);
   };
   return (
-    <div className={styles.container}>
-      {
-        generatedImages.length > 0
-          ? (
-              <>
-                {/* <div><img src={generatedImages[0]} onClick={() => selectImage(generatedImages[0])} style={{ border: generatedImages[0] === selectedImage ? "2px solid white" : "none" }} /></div> */}
-                <div><img src={generatedImages[1]} onClick={() => selectImage(generatedImages[1])} style={{ border: generatedImages[1] === selectedImage ? "2px solid white" : "none" }} /></div>
-                <div><img src={generatedImages[2]} onClick={() => selectImage(generatedImages[2])} style={{ border: generatedImages[2] === selectedImage ? "2px solid white" : "none" }}/></div>
-                <div><img src={generatedImages[3]} onClick={() => selectImage(generatedImages[3])} style={{ border: generatedImages[3] === selectedImage ? "2px solid white" : "none" }}/></div>
-              </>
-            )
-          : (
-            <>
-              <div className={styles.navigation}>
-                <div className={styles.control} onClick={() => setColor("aqua")} style={{ backgroundColor: "aqua" }} />
-                <div className={styles.control} onClick={() => setColor("#fdec03")} style={{ backgroundColor: "#fdec03" }} />
-                <div className={styles.control} onClick={() => setColor("#fff")} style={{ backgroundColor: "#fff" }} />
-                <div className={styles.control} onClick={() => setColor("#EF626C")} style={{ backgroundColor: "#EF626C" }} />
-                <input type="range" min={1} max={50} value={size} className={styles.range} onChange={(e) => setSize(e.target.value)} />
-              </div>
-              <canvas
-                ref={canvasRef}
-                onMouseEnter={(e) => setPos(e)}
-                onMouseMove={(e) => {
-                  setPos(e)
-                  draw(e)
-                }}
-                onMouseDown={(e) => setPos(e)}
-                onTouchMove={(e) => {
-                  setTouchPos(e)
-                  drawTouch(e)
-                }}
-                onTouchStart={(e) => setTouchPos(e)}
-                onTouchEnd={(e) => setTouchPos(e)}
-              />
-              <div style={{ display: "flex", justifyContent: "flex-start" }}>
-                <LittleButton mute={false} isGenerating={isGenerating} onClickAction={() => generate()}>generate</LittleButton>
-                <div style={{ width: "2px" }} />
-                <LittleButton mute={false} isGenerating={false} onClickAction={() => {
-                  const ctx = canvasCtx;
-                  ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-                  setGeneratedImages([]);
-                }}>
-                  clear
-                </LittleButton>
-              </div>
-            </>
-          )
-        }
-  </div>
+        <div className={styles.container}>
+          {
+            generatedImages.length > 0
+              ? (
+                  <div>
+                    {/* <div><img src={generatedImages[0]} onClick={() => selectImage(generatedImages[0])} style={{ border: generatedImages[0] === selectedImage ? "2px solid white" : "none" }} /></div> */}
+                    <div><img src={generatedImages[1]} onClick={() => selectImage(generatedImages[1])} style={{ border: generatedImages[1] === selectedImage ? "2px solid white" : "none" }} /></div>
+                    <div><img src={generatedImages[2]} onClick={() => selectImage(generatedImages[2])} style={{ border: generatedImages[2] === selectedImage ? "2px solid white" : "none" }} /></div>
+                    <div><img src={generatedImages[3]} onClick={() => selectImage(generatedImages[3])} style={{ border: generatedImages[3] === selectedImage ? "2px solid white" : "none" }} /></div>
+                  </div>
+                )
+              : (
+                <>
+                  <div className={styles.navigation}>
+                    <div className={styles.control} onClick={() => setColor("aqua")} style={{ backgroundColor: "aqua" }} />
+                    <div className={styles.control} onClick={() => setColor("#fdec03")} style={{ backgroundColor: "#fdec03" }} />
+                    <div className={styles.control} onClick={() => setColor("#fff")} style={{ backgroundColor: "#fff" }} />
+                    <div className={styles.control} onClick={() => setColor("#EF626C")} style={{ backgroundColor: "#EF626C" }} />
+                    <input type="range" min={1} max={50} value={size} className={styles.range} onChange={(e) => setSize(e.target.value)} />
+                  </div>
+                  <canvas
+                    ref={canvasRef}
+                    onMouseEnter={(e) => setPos(e)}
+                    onMouseMove={(e) => {
+                      setPos(e)
+                      draw(e)
+                    }}
+                    onMouseDown={(e) => setPos(e)}
+                    onTouchMove={(e) => {
+                      setTouchPos(e)
+                      drawTouch(e)
+                    }}
+                    onTouchStart={(e) => setTouchPos(e)}
+                    onTouchEnd={(e) => setTouchPos(e)}
+                  />
+                  <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                    <LittleButton mute={false} isGenerating={isGenerating} onClickAction={() => generate()}>generate!</LittleButton>
+                    <div style={{ width: "2px" }} />
+                    <LittleButton mute={false} isGenerating={false} onClickAction={() => {
+                      const ctx = canvasCtx;
+                      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+                      setGeneratedImages([]);
+                    }}>
+                      <RiDeleteBin2Line size="25px" />
+                    </LittleButton>
+                  </div>
+                </>
+              )
+            }
+        </div>
   );
 }
 

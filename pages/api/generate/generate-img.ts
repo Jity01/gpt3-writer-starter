@@ -26,6 +26,7 @@ const generateAction = async (req, res) => {
     redirect: 'follow'
   });
   const resJSON = await response.json();
+  console.log(resJSON)
   const { output } = resJSON;
   res.status(200).json({ images: output });
 };

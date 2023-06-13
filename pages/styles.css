@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap');
 
+html {
+    background-color: black;
+}
+
 body {
     position: relative;
     margin: 0;

@@ -26,6 +26,13 @@
     border: 1px solid hsl(160, 51%, 32%);
 }
 
+.toolBox {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+
 @media (max-width: 600px) {
     .container {
         width: 300px;

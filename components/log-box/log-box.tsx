@@ -12,13 +12,18 @@ function LogBox({ placeholder, value, onChange, button, children }) {
   };
   return (
     <div className={styles.container}>
+      <br />
       <textarea
         placeholder={placeholder}
         value={formatValue(value)}
         onChange={onChange}
       />
+      <div className={styles.toolBox}>
+        { button }
+      </div>
+      <br />
+      <br />
       { children }
-      { button }
     </div>
   );
 }

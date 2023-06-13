@@ -154,16 +154,6 @@ export const deleteLogVector = async (userId, logId) => {
   });
 }
 
-export const addLike = async (logId: number, updatedLikes: number) => {
-  await fetch(`${baseURL}/api/db/add-like`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      },
-    body: JSON.stringify({ logId, updatedLikes }),
-  });
-}
-
 export const saveImg = async (userId: number, logId: number, imgURL: string) => {
   await fetch(`${baseURL}/api/db/save-img`, {
     method: 'POST',
@@ -171,5 +161,15 @@ export const saveImg = async (userId: number, logId: number, imgURL: string) => 
       'Content-Type': 'application/json',
       },
     body: JSON.stringify({ userId, logId, imgURL }),
+  });
+}
+
+export const addMusicLinkToLog = async (userId: number, logId: number, musicURL: string) => {
+  await fetch(`${baseURL}/api/db/add-music-to-log`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+    body: JSON.stringify({ userId, logId, musicURL }),
   });
 }

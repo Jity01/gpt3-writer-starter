@@ -1,5 +1,11 @@
 import LogBox from "../components/log-box/log-box";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
+import { RiReplyAllLine, RiDeleteBinLine } from "react-icons/ri";
+import { MdOutlineDraw } from "react-icons/md";
+import { HiMusicNote } from "react-icons/hi";
+import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { SlDislike } from "react-icons/sl";
+import { FcCancel } from "react-icons/fc";
 import {
   addLog,
   getUserId,
@@ -7,8 +13,8 @@ import {
   deleteLog,
   addReplyToLog,
   resetReplyLogId,
-  addLike,
   addUser,
+  addMusicLinkToLog,
 } from "../utils/client/db-helpers";
 import { signIn, getSession, signOut, useSession } from 'next-auth/react';
 import Button from "../components/button/button";
@@ -29,6 +35,8 @@ import {
 } from "../utils/client/db-helpers";
 import React from "react";
 import Canvas from "../components/canvas/canvas";
+import Input from "../components/input/input";
+import Root from "../components/root/root";
 
 function SnapLog({ userId, logs }) {
   const sortLogs = (logs) => {
@@ -37,7 +45,7 @@ function SnapLog({ userId, logs }) {
     });
   };
   const [logMessage, setlogMessage] = useState(``);
-  const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: { id: -1, isDeleting: false }, addLike: { id: -1, isAdding: false }, searchLogs: false, dislikeSearch: false, talkGeneration: false });
+  const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: { id: -1, isDeleting: false }, searchLogs: false, dislikeSearch: false, talkGeneration: false });
   const [updatedLogs, setUpdatedLogs] = useState(!logs ? [] : sortLogs([...logs]));
   const [replyMode, setReplyMode] = useState(false);
   const [replyMessage, setReplyMessage] = useState(``);
@@ -54,6 +62,8 @@ function SnapLog({ userId, logs }) {
   const [alerts, setAlerts]: any[] = useState([]);
   const [lastLogId, setLastLogId] = useState(null);
   const [addImageToLog, setAddImageToLog] = useState(false);
+  const [musicMode, setMusicMode] = useState(false);
+  const [musicLink, setMusicLink] = useState(``);
   const logBoxRef: any = useRef(null)
   const replyRef: any = useRef(null)
   const executeScroll = (ref) => ref.current?.scrollIntoView();
@@ -66,25 +76,30 @@ function SnapLog({ userId, logs }) {
     const names: any[] = session?.user?.name?.split(" ") as any[];
     userId = await getUserId(names[0], names[1], session?.user?.email);
     logs = await getLogsByUserId(userId);
-    setUpdatedLogs(logs.slice(0).sort((a, b) => {
-      if (a.num_of_likes === b.num_of_likes) {
-        return a.id > b.id ? 1 : -1;
-      }
-      return a.num_of_likes > b.num_of_likes ? 1 : -1;
-      }).reverse());
+    setUpdatedLogs(sortLogs(logs));
     setCurrUserId(userId);
+  };
+  const formatMusicLink = (link) => {
+    const splitLink = link.split("/");
+    const videoId = splitLink[splitLink.length - 1];
+    return `https://www.youtube.com/embed/${videoId}`;
   };
   const handleLog = async () => {
     if (currUserId) {
       if (logMessage.length > 0) {
         setIsGenerating({ ...isGenerating, addLog: true});
-        setLastLogId(await addLog(logMessage, userId, false));
+        const newLogId = await addLog(logMessage, userId, false);
+        setLastLogId(newLogId);
         const newLogs = await getLogsByUserId(userId);
         setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
           return a.created_at < b.created_at ? 1 : -1;
         }));
         setlogMessage(``);
         setAddImageToLog(true);
+        setMusicMode(false);
+        setMusicLink(``);
+        setDrawMode(false);
+        if (musicLink) await addMusicLinkToLog(currUserId, newLogId, formatMusicLink(musicLink));
         setIsGenerating({ ...isGenerating, addLog: false});
       } else {
         setAlerts([...alerts, { message: `you can not log an empty message`, type: `error` }]);
@@ -169,23 +184,6 @@ function SnapLog({ userId, logs }) {
       currentLog = childMatch;
     }
     return childrenMatches;
-  };
-  const addLikeToLog = async (logId: number, currentLikes: number) => {
-    if (currUserId) {
-      setIsGenerating({ ...isGenerating, addLike: { id: logId, isAdding: true } });
-      const updatedLikes = currentLikes + 1;
-      await addLike(logId, updatedLikes);
-      const newLogs = await getLogsByUserId(userId);
-      setUpdatedLogs(newLogs);
-      const newMatches = matches.map((match) => {
-        if (match && match.id === logId) {
-          return { ...match, num_of_likes: updatedLikes };
-        }
-        return match;
-      });
-      setMatches(newMatches);
-      setIsGenerating({ ...isGenerating, addLike: { id: -1, isAdding: false } });
-    }
   };
   const generateQuestion = async (message, setMessage) => {
     if (currUserId) {
@@ -359,10 +357,12 @@ function SnapLog({ userId, logs }) {
     }
   }, [currUserId])
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <Root isSearching={isSearching}>
       <Head>
         <title>reinforce</title>
       </Head>
+      <br />
+      <br />
       {
         alerts.map((alert, i) => (
           <Alert key={i} type={alert.type}>
@@ -371,45 +371,56 @@ function SnapLog({ userId, logs }) {
               <button
                 onClick={() => handleCloseAlert(i)}
               >
-                x
+                <AiOutlineCloseCircle size="20px" />
               </button>
             </>
           </Alert>
         ))
       }
       <br />
-      <Title onClickAction={() => {
-        setIsSearching(!isSearching)
-        if (!isSearching) {
-          setAlerts([...alerts, { message: `you are now in searching mode`, type: `info` }])
-        } else {
-          setAlerts([...alerts, { message: `you are now in logging mode`, type: `info` }])
-          setMatches(updatedLogs);
-          setRawMatches([]);
-          setSearchMessage(``);
-          setSearchInputVector([]);
-        }
-      }} isSearching={isSearching} />
+      <Title
+        onClickAction={() => {
+          setIsSearching(!isSearching)
+          if (!isSearching) {
+            setAlerts([...alerts, { message: `you are now in searching mode`, type: `info` }])
+            setDrawMode(false);
+            setMusicMode(false);
+          } else {
+            setMatches(updatedLogs);
+            setRawMatches([]);
+            setSearchMessage(``);
+            setSearchInputVector([]);
+          }
+        }}
+        isSearching={isSearching}
+      />
       <div ref={logBoxRef}></div>
       <br />
         <LogBox
           button={
             replyMode
             ?
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "10px" }}>
-                <br />
-                <Button onClickAction={() => {setDrawMode(!drawMode)}} isGenerating={false}>draw</Button>
+              <>
+                <LittleButton onClickAction={() => setDrawMode(!drawMode)} isGenerating={false} mute={false}><MdOutlineDraw size="25px" /></LittleButton>
+                <LittleButton onClickAction={() => {
+                  setMusicMode(!musicMode)
+                  setMusicLink(``)
+                }} isGenerating={false} mute={false}><HiMusicNote size="25px" /></LittleButton>
+                <LittleButton onClickAction={cancelReply} isGenerating={false} mute={false}><FcCancel size="25px" /></LittleButton>
                 <Button onClickAction={closeReply} isGenerating={isGenerating.addLog}>reply</Button>
-                <Button onClickAction={cancelReply} isGenerating={false}>cancel</Button>
-              </div>
+              </>
             : isSearching
               ? <Button onClickAction={handleSearch} isGenerating={isGenerating.searchLogs}>search</Button>
               : (
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "10px" }}>
-                    <br />
-                    <Button onClickAction={() => {setDrawMode(!drawMode)}} isGenerating={false}>draw</Button>
+                  <>
+                    <LittleButton onClickAction={() => setDrawMode(!drawMode)} isGenerating={false} mute={false}><MdOutlineDraw size="25px" /></LittleButton>
+                    <LittleButton onClickAction={() => {
+                      setMusicMode(!musicMode)
+                      setMusicLink(``)
+                    }} isGenerating={false} mute={false}><HiMusicNote size="25px" /></LittleButton>
+                    <div style={{ minWidth: "60px", maxWidth: "60px" }} />
                     <Button onClickAction={handleLog} isGenerating={isGenerating.addLog}>log{" "}{" "}</Button>
-                  </div>
+                  </>
               )
           }
           placeholder={
@@ -435,16 +446,23 @@ function SnapLog({ userId, logs }) {
           }
         >
           { drawMode && (
-            <>
-              <div style={{ height: "10px"}} />
-              <Canvas
-                userId={currUserId}
-                logId={lastLogId}
-                saveSelectedImage={addImageToLog}
-                setAddImageToLog={setAddImageToLog}
-              />
-            </>
-          ) }
+              <>
+                {/* <div style={{ height: "10px" }} /> */}
+                <Canvas
+                  userId={currUserId}
+                  logId={lastLogId}
+                  saveSelectedImage={addImageToLog}
+                  setAddImageToLog={setAddImageToLog}
+                />
+              </>
+          )}
+          { musicMode
+              && (
+                <div style={{ display: "flex", flexDirection: "column", width: "94%" }}>
+                  <h3>enter ur music</h3>
+                  <Input placeholder="enter youtube url" value={musicLink} onChangeAction={(e) => setMusicLink(e.target.value)} />
+                </div>
+              ) }
         </LogBox>
         <br />
         <br />
@@ -456,6 +474,7 @@ function SnapLog({ userId, logs }) {
                 <div key={log.id}>
                   <Log
                     replyRef={!isSearching && idOfLogToReplyTo === log.id ? replyRef : null}
+                    musicLink={log.music_url}
                     key={log.id + 99}
                     isSearching={isSearching}
                     talkMessage={talkMessage}
@@ -473,26 +492,8 @@ function SnapLog({ userId, logs }) {
                       </Button>
                     )}
                     talkMode={talkMode}
-                    likeButton={(
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end"}}>
-                        <LittleButton
-                          onClickAction={() => addLikeToLog(log.id, log.num_of_likes)}
-                          isGenerating={isGenerating.addLike.id === log.id && isGenerating.addLike.isAdding}
-                          mute={false}>
-                          <> 
-                            {
-                              log.num_of_likes !== 0
-                                ? log.num_of_likes > 3
-                                  ? <>{new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 3 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
-                                  : new Array(log.num_of_likes).fill(0).map((i, idx) => idx < 3 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
-                                : <>🍀?</>
-                            }
-                          </>
-                        </LittleButton>
-                      </div>
-                    )}
                     logMark="log"
-                    replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}>reply</LittleButton>}
+                    replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}><RiReplyAllLine size="25px" /></LittleButton>}
                     deleteButton={(
                       <LittleButton
                         onClickAction={() => handleDelete(log.id)}
@@ -501,7 +502,7 @@ function SnapLog({ userId, logs }) {
                         }
                         mute={false}
                       >
-                        delete
+                        <RiDeleteBinLine size="25px" />
                       </LittleButton>
                     )}
                     numOfLogs={getParentMatches(updatedLogs).length - (logIdx)}
@@ -519,6 +520,7 @@ function SnapLog({ userId, logs }) {
                     childLog
                       && <Log
                         replyRef={!isSearching && idOfLogToReplyTo === childLog.id ? replyRef : null}
+                        musicLink={childLog.music_url}
                         key={childLog.id}
                         talkMessage={talkMessage}
                         isSearching={isSearching}
@@ -534,33 +536,16 @@ function SnapLog({ userId, logs }) {
                             talk
                           </Button>
                         )}
-                        likeButton={(
-                          <LittleButton
-                            onClickAction={() => addLikeToLog(childLog.id, childLog.num_of_likes)}
-                            isGenerating={isGenerating.addLike.id === childLog.id && isGenerating.addLike.isAdding}
-                            mute={false}
-                          >
-                            <> 
-                              {
-                                childLog.num_of_likes !== 0
-                                  ? childLog.num_of_likes > 3
-                                    ? <>{new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 3 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)}+</>
-                                    : new Array(childLog.num_of_likes).fill(0).map((i, idx) => idx < 3 && <span key={idx} style={{ marginRight: "2px"}}>🍀</span>)
-                                  : <>🍀?</>
-                              }
-                            </>
-                          </LittleButton>
-                        )}
                         talkMode={talkMode}
                         choseValueToTalkTo={talkMessage.valueToTalkTo}
-                        replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}>reply</LittleButton>}
+                        replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}><RiReplyAllLine size="25px" /></LittleButton>}
                         deleteButton={(
                           <LittleButton
                             onClickAction={() => handleDelete(childLog.id)}
                             isGenerating={isGenerating.deleteLog.id === childLog.id && isGenerating.deleteLog.isDeleting}
                             mute={false}
                           >
-                            delete
+                            <RiDeleteBinLine size="25px"/>
                           </LittleButton>
                         )}
                         logMark={"log"}
@@ -585,6 +570,7 @@ function SnapLog({ userId, logs }) {
                       replyRef={isSearching && idOfLogToReplyTo === log.id ? replyRef : null}
                       key={log.id}
                       isSearching={isSearching}
+                      musicLink={log.music_url}
                       talkMessage={talkMessage}
                       imgURL={log.imgurl}
                       setTalkMessage={setTalkMessage}
@@ -598,17 +584,16 @@ function SnapLog({ userId, logs }) {
                           talk
                         </Button>
                       )}
-                      likeButton={null}
                       talkMode={talkMode}
                       choseValueToTalkTo={talkMessage.valueToTalkTo}
-                      replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}>reply</LittleButton>}
+                      replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}><RiReplyAllLine size="25px" /></LittleButton>}
                       deleteButton={(
                         <LittleButton
                           onClickAction={() => handleDelete(log.id)}
                           isGenerating={isGenerating.deleteLog.id === log.id && isGenerating.deleteLog.isDeleting}
                           mute={false}
                         >
-                          delete
+                          <RiDeleteBinLine size="25px" />
                         </LittleButton>
                       )}
                       numOfLogs={logIdx + 1}
@@ -623,7 +608,7 @@ function SnapLog({ userId, logs }) {
                           isGenerating={isGenerating.dislikeSearch}
                           mute={false}
                         >
-                          👎
+                          <SlDislike size="25px" />
                         </LittleButton>
                       )} />
                     <div key={log.id + 1}>
@@ -634,6 +619,7 @@ function SnapLog({ userId, logs }) {
                         replyRef={idOfLogToReplyTo === childLog.id ? replyRef : null}
                         key={childLog.id}
                         talkMessage={talkMessage}
+                        musicLink={childLog.music_url}
                         isSearching={isSearching}
                         imgURL={childLog.imgurl}
                         setTalkMessage={setTalkMessage}
@@ -647,17 +633,16 @@ function SnapLog({ userId, logs }) {
                             talk
                           </Button>
                         )}
-                        likeButton={null}
                         talkMode={talkMode}
                         choseValueToTalkTo={talkMessage.valueToTalkTo}
-                        replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}>reply</LittleButton>}
+                        replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}><RiReplyAllLine size="25px" /></LittleButton>}
                         deleteButton={(
                           <LittleButton
                             onClickAction={() => handleDelete(childLog.id)}
                             isGenerating={isGenerating.deleteLog.id === childLog.id && isGenerating.deleteLog.isDeleting}
                             mute={false}
                           >
-                            delete
+                            <RiDeleteBinLine size="25px" />
                           </LittleButton>
                         )}
                         logMark={"match"}
@@ -685,7 +670,7 @@ function SnapLog({ userId, logs }) {
         <Button onClickAction={() => signOut()} isGenerating={false}>sign out</Button>
       </div>
     }
-    </div>
+    </Root>
   );
 }
 

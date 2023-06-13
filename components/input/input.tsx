@@ -1,4 +1,5 @@
 import styles from './input.module.css';
+import React from 'react';
 
 function Input({ placeholder, value, onChangeAction }) {
   return (

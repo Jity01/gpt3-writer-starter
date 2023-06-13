@@ -1,6 +1,14 @@
 .container {
     padding: 5px;
     border-radius: 10px;
+    border: 0.3px solid #8d8d8d;
+    /* position: fixed; */
+    /* background-color: black; */
+    /* width: 300px; */
+    /* height: 400px; */
+    /* inset: 0px; */
+    /* margin: auto; */
+    /* z-index: 1; */
 }
 
 .navigation {
@@ -53,7 +61,7 @@
  /***** Chrome, Safari, Opera and Edge Chromium styles *****/
  /* slider track */
 .container input[type="range"]::-webkit-slider-runnable-track {
-    background-color: #053a5f;
+    background-color: #ccc;
     border-radius: 0.5rem;
     height: 0.5rem;  
 }
@@ -65,7 +73,8 @@
     margin-top: -4px; /* Centers thumb on the track */
  
     /*custom styles*/
-    background-color: #5cd5eb;
+    background-color: black;
+    border: 0.1px solid #838383;
     height: 1rem;
     width: 1rem;
 }
