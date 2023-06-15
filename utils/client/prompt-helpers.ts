@@ -11,13 +11,13 @@ export const getGeneration = async (prompt: string) => {
   return basePromptOutput;
 };
 
-export const generateImg = async (imgURL: string, prompt: string) => {
+export const generateImg = async (imgURL: string) => {
   const response = await fetch('/api/generate/generate-img', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ imgURL, prompt }),
+    body: JSON.stringify({ imgURL }),
   });
   const output = await response.json();
   const { images } = output;

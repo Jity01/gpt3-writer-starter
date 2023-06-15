@@ -50,7 +50,7 @@ function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
     const canvas = canvasRef.current;
     const image = canvas.toDataURL("image/png");
     const publicallyAccessibleLink = await getPublicallyAccessibleLink(image);
-    const images = await generateImg(publicallyAccessibleLink, "atmospheric");
+    const images = await generateImg(publicallyAccessibleLink);
     setGeneratedImages(images);
     setIsGenerating(false);
   };

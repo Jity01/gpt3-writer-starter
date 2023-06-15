@@ -1,9 +1,12 @@
+const prompt = "atmospheric, hazy, blurry, animation, weird, odd, off, post-impressionist, fauvism, detailed clothing, elementary shapes, abstract, expressionism, pop art";
+const negativePrompt = "futuristic, highly detailed, stunningly beautiful, sharp focus, trending on instagram, trending on tumblr, HDR 4K, 8K'";
+
 const generateAction = async (req, res) => {
-  const { prompt, imgURL } = req.body;
+  const { imgURL } = req.body;
   var raw = JSON.stringify({
     "key": process.env.STABLE_DIFFUSION_API_KEY,
     "prompt": prompt,
-    "negative_prompt": null,
+    "negative_prompt": negativePrompt,
     "init_image": imgURL,
     "width": "512",
     "height": "512",
