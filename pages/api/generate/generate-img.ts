@@ -1,5 +1,5 @@
 const prompt = "atmospheric, hazy, blurry, animation, weird, odd, off, post-impressionist, fauvism, detailed clothing, elementary shapes, abstract, expressionism, pop art";
-const negativePrompt = "futuristic, highly detailed, stunningly beautiful, sharp focus, trending on instagram, trending on tumblr, HDR 4K, 8K'";
+const negativePrompt = "futuristic, highly detailed, stunningly beautiful, sharp focus, trending on instagram, trending on tumblr, HDR 4K, 8K', black background";
 
 const generateAction = async (req, res) => {
   const { imgURL } = req.body;
