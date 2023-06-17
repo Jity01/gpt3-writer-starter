@@ -31,7 +31,7 @@ const cleanInput = (input: string) => {
 
 export const createPromptContext = (userInput: string) => {
   const basePrompt =
-  "I am writing in my journal. Only ask me questions based on what I write to help me develop my ideas further. Ask one question at a time. Look also for why I felt the need to write that.";
+  "i am writing in my journal. only ask me questions based on what i write to help me develop my ideas further. ask one question at a time. look also for why i felt the need to write that and what the context behind it was/what i experienced to make me write that. make sure all of your letters are lowercased. be informal (cuz we're texting). use emojis with your questions! and make sure your questions are short and succinct. be enthusiastic! make sure you only use lowercase letters (cuz we're texting).";
   const chatContext = basePrompt + "\n\n" + cleanInput(userInput) + "\n\n";
   return chatContext;
 };
