@@ -14,34 +14,34 @@ function Instructions() {
         <p>the hope is to make you feel more connected to your values, and with those connections, to help you <span style={{ fontSize: "larger", "fontWeight": "bold", textDecoration: "underline" }}>solve your problems</span> more effectively.</p>
       </div>
       <div style={{ fontSize: "1.5rem", color: "hsl(72, 82%, 69%)" }}>
-        <h3>&emsp;here's how it works:</h3>
+        <h3>&emsp;here&apos;s how it works:</h3>
       </div>
       <ol>
-        <li>when you have an insightful thought you'd like to record, hit the "log" button to save it as a new journal entry</li>
-        <p style={{ color: "hsl(174, 69%, 40%)"}}>💡tip: as you're logging, hit "return" three times to get questions that'll help you reflect better</p>
+        <li>when you have an insightful thought you&apos;d like to record, hit the &quot;log&quot; button to save it as a new journal entry</li>
+        <p style={{ color: "hsl(174, 69%, 40%)"}}>💡tip: as you&apos;re logging, hit &quot;return&quot; three times to get questions that&apos;ll help you reflect better</p>
         <br />
         <Example>
-          <p>"michael said a lot of ideas that you have might actually be really stupid - ineffective AND distracting. that might be something you wanna consider before attaching yourself too heavily to any one of them."</p>
+          <p>&quot;michael said a lot of ideas that you have might actually be really stupid - ineffective AND distracting. that might be something you wanna consider before attaching yourself too heavily to any one of them.&quot;</p>
         </Example>
         <br />
         <li>whenever you have problems, you can search through your thoughts to get assistance from your past wisdom</li>
-        <p style={{ color: "hsl(174, 69%, 40%)"}}>💡tip: as you're searching, hit "return/enter" three times to get questions that'll help you express your emotions better</p>
+        <p style={{ color: "hsl(174, 69%, 40%)"}}>💡tip: as you&apos;re searching, hit &quot;return/enter&quot; three times to get questions that&apos;ll help you express your emotions better</p>
         <br />
         <Example>
           <p>i searched about being unusually distracted and this was one of the logs that came up - funny but effective!</p>
-          <p>you have to stop playing with your hair when you’re thinking bro it’s so distracting. i’m writing this down because i am +begging+ you to stop. i’m so done with this.</p>
+          <p>you have to stop playing with your hair when you&apos;re thinking bro it&apos;s so distracting. i&apos;m writing this down because i am +begging+ you to stop. i&apos;m so done with this.</p>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <img src="https://cdn.stablediffusionapi.com/generations/bafbb63c-3308-4df2-a9da-f81bdeb00dce-0.png" width="300" height="300" />
           </div>
         </Example>
         <br />
-        <li>finally! whenever you feel like you need extra guidance or you feel inspired, you can "talk" to your logs by hitting the talk button associated with each one of them  :)</li>
+        <li>finally! whenever you feel like you need extra guidance or you feel inspired, you can &quot;talk&quot; to your logs by hitting the talk button associated with each one of them  :)</li>
         <div style={{ fontSize: "1.3rem", color: "hsl(72, 82%, 69%)" }}>
-          <h3>tools for when you're logging</h3>
+          <h3>tools for when you&apos;re logging</h3>
         </div>
         <br />
-        <li>if you hit the little draw button, you can get images that correspond with what you're logging to help you express the unexpressable.</li>
-        <p style={{ color: "hsl(174, 69%, 40%)"}}>💡tip: make a custom image by drawing a sketch of it and then hitting "generate" to get an image inspired by your drawing!</p>
+        <li>if you hit the little draw button, you can get images that correspond with what you&apos;re logging to help you express the unexpressable.</li>
+        <p style={{ color: "hsl(174, 69%, 40%)"}}>💡tip: make a custom image by drawing a sketch of it and then hitting &quot;generate&quot; to get an image inspired by your drawing!</p>
         <Example>
           <p>an image i got when i logged something about confusion</p>
           <div style={{ display: "flex", justifyContent: "center" }}>
@@ -49,7 +49,7 @@ function Instructions() {
           </div>
         </Example>
         <br />
-        <li>if you hit the little music button, you can input music that corresponds with what you're saying. right now, you can only input youtube links. (working on this!)</li>
+        <li>if you hit the little music button, you can input music that corresponds with what you&apos;re saying. right now, you can only input youtube links. (working on this!)</li>
         <br />
         <Example>
           <p>a song that i listen to every time i read my fav log about the importance of accepting where you are</p>
@@ -58,7 +58,7 @@ function Instructions() {
         <br />
         <br />
         <p>if you want to use this, have questions, comments (IDEAS!!), and/or concerns, say hi @ jmegametric@gmail.com :)</p>
-        <a href="https://calendly.com/jity-woldemichael/15min" style={{ color: "yellowgreen" }}>if you're a wild one, you can also just straight up schedule a meeting with me! </a>
+        <a href="https://calendly.com/jity-woldemichael/15min" style={{ color: "yellowgreen" }}>if you&apos;re a wild one, you can also just straight up schedule a meeting with me! </a>
       </ol>
     </div>
     </div>
