@@ -15,7 +15,7 @@ function Log({ musicLink, replyRef, isSearching, imgURL, logMark, talkMessage, s
     return formattedDate;
   };
   const formatMessage = (message: string) => {
-    const trimmedMessage = message.split(`\n`);
+    const trimmedMessage = message.toLowerCase().split(`\n`);
     const messageDivs = trimmedMessage.map(chunck => {
       return (
         chunck.startsWith("**")
@@ -56,8 +56,7 @@ function Log({ musicLink, replyRef, isSearching, imgURL, logMark, talkMessage, s
             className={styles.textarea}
             style={isReply ? window.innerWidth < 600 ? { minWidth: "190px", maxWidth: "190px" } : { minWidth: "221px", maxWidth: "221px" } : {}}
             value={formatValue(talkMessage.message)}
-            onChange={(e) => setTalkMessage({ ...talkMessage, message: e.target.value })}
-            placeholder={'talk to me :)'}
+            onChange={(e) => setTalkMessage({ ...talkMessage, message: e.target.value.toLowerCase() })}
           />
           <div className={`${styles.singularButton} ${styles.buttonContainer}`}>
             { talkButton }

@@ -1,12 +1,12 @@
 const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://reinfrc.com';
 
-export const addLog = async (logMessage: string, userId: number, isReply: boolean) => {
+export const addLog = async (logMessage: string, userId: number, isReply: boolean, imgurl: string) => {
   const response = await fetch(`${baseURL}/api/db/add-log`, {
     method: 'POST',
     headers: {
      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ logMessage, userId, isReply }),
+    body: JSON.stringify({ logMessage, userId, isReply, imgurl }),
   });
   const data = await response.json();
   await insertLogsIntoVectorDB(userId, data.lastLog);

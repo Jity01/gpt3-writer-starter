@@ -5,8 +5,9 @@ import { generateImg } from '../../utils/client/prompt-helpers';
 import { saveImg } from '../../utils/client/db-helpers';
 import { getLinkFromCloudinary } from '../../utils/client/cloudinary-helpers';
 import { RiDeleteBin2Line } from 'react-icons/ri';
+// import { getLogsByUserId } from '../../utils/client/db-helpers';
 
-function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
+function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog, setUpdatedLogs }) {
   const [canvasCtx, setCanvasCtx]: any = useState(null);
   const [mouseData, setMouseData]: any = useState({ x: null, y: null });
   const [color, setColor]: any = useState("#fff");
@@ -50,7 +51,7 @@ function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
     const canvas = canvasRef.current;
     const image = canvas.toDataURL("image/png");
     const publicallyAccessibleLink = await getPublicallyAccessibleLink(image);
-    const images = await generateImg(publicallyAccessibleLink);
+    const images = await generateImg(publicallyAccessibleLink, "");
     setGeneratedImages(images);
     setIsGenerating(false);
   };
@@ -85,9 +86,20 @@ function Canvas({ logId, userId, saveSelectedImage, setAddImageToLog }) {
     ctx.lineCap = "round";
     ctx.stroke();
   };
+  // const sortLogs = (logs) => {
+  //   return logs.slice(0).sort((a, b) => {
+  //     return a.created_at < b.created_at ? 1 : -1;
+  //   });
+  // };
   useEffect(() => {
     if (saveSelectedImage) {
-      saveGeneratedImage(selectedImage).then();
+      saveGeneratedImage(selectedImage).then(
+        // async () => {
+        //   const logs = await getLogsByUserId(userId);
+        //   console.log(logs)
+        //   setUpdatedLogs(sortLogs(logs));
+        // }
+      );
       setAddImageToLog(false);
       setSelectedImage(null);
       setGeneratedImages([]);

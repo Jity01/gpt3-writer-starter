@@ -1,0 +1,11 @@
+.container {
+    max-width: 600px;
+    border: 1px solid hsl(328, 94%, 49%);
+    padding: 20px;
+}
+
+.innerContainer {
+    padding: 10px;
+    background-color: hsl(328, 94%, 49%);
+    color: white;
+}

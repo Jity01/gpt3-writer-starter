@@ -6,6 +6,7 @@ import { HiMusicNote } from "react-icons/hi";
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { SlDislike } from "react-icons/sl";
 import { FcCancel } from "react-icons/fc";
+import Link from "next/link";
 import {
   addLog,
   getUserId,
@@ -24,7 +25,12 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import Log from "../components/log/log";
 import Alert from "../components/alert/alert";
 import Head from "next/head";
-import { getGeneration, createPromptContext, createTalkToMePrompt} from "../utils/client/prompt-helpers";
+import {
+  getGeneration,
+  createPromptContext,
+  createTalkToMePrompt,
+  generateImg,
+} from "../utils/client/prompt-helpers";
 import Title from "../components/title/title";
 import { stringifyOutputEmbeddings, unstringifyOutputEmbeddings } from "../utils/api/output-stringifier";
 import {
@@ -45,7 +51,7 @@ function SnapLog({ userId, logs }) {
     });
   };
   const [logMessage, setlogMessage] = useState(``);
-  const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: { id: -1, isDeleting: false }, searchLogs: false, dislikeSearch: false, talkGeneration: false });
+  const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: { id: -1, isDeleting: false }, searchLogs: false, dislikeSearch: false, talkGeneration: false, image: false });
   const [updatedLogs, setUpdatedLogs] = useState(!logs ? [] : sortLogs([...logs]));
   const [replyMode, setReplyMode] = useState(false);
   const [replyMessage, setReplyMessage] = useState(``);
@@ -64,6 +70,7 @@ function SnapLog({ userId, logs }) {
   const [addImageToLog, setAddImageToLog] = useState(false);
   const [musicMode, setMusicMode] = useState(false);
   const [musicLink, setMusicLink] = useState(``);
+  const [generatedImage, setGeneratedImage] = useState([]);
   const logBoxRef: any = useRef(null)
   const replyRef: any = useRef(null)
   const executeScroll = (ref) => ref.current?.scrollIntoView();
@@ -80,6 +87,8 @@ function SnapLog({ userId, logs }) {
     setCurrUserId(userId);
   };
   const formatMusicLink = (link) => {
+    if (link.includes("embed")) return link;
+    if (link.includes("watch?v=")) return `https://www.youtube.com/embed/${link.split("watch?v=")[1]}`;
     const splitLink = link.split("/");
     const videoId = splitLink[splitLink.length - 1];
     return `https://www.youtube.com/embed/${videoId}`;
@@ -88,7 +97,7 @@ function SnapLog({ userId, logs }) {
     if (currUserId) {
       if (logMessage.length > 0) {
         setIsGenerating({ ...isGenerating, addLog: true});
-        const newLogId = await addLog(logMessage, userId, false);
+        const newLogId = await addLog(logMessage, userId, false, generatedImage.length !== 0 ? generatedImage[0] : '');
         setLastLogId(newLogId);
         const newLogs = await getLogsByUserId(userId);
         setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
@@ -148,7 +157,7 @@ function SnapLog({ userId, logs }) {
   const closeReply = async () => {
     if (replyMessage.length > 0) {
       setIsGenerating({ ...isGenerating, addLog: true });
-      const id = await addLog(replyMessage, userId, true);
+      const id = await addLog(replyMessage, userId, true, generatedImage.length !== 0 ? generatedImage[0] : '');
       const replyLogId = id;
       setLastLogId(id);
       await addReplyToLog(idOfLogToReplyTo, replyLogId);
@@ -191,7 +200,7 @@ function SnapLog({ userId, logs }) {
       const promptWithContext = createPromptContext(message.slice(0, -3));
       const generatedQuestion = await getGeneration(promptWithContext);
       const questionToInsert = `<strong>${generatedQuestion.replace(/^\n+|\n+$/g, '').replace("<strong>", "").replace("</strong>").replace("*", "")}</strong>`;
-      setMessage(`${message.slice(0, -2)}\n${questionToInsert}\n`);
+      setMessage(`${message.slice(0, -2)}\n${questionToInsert}\n`.toLowerCase());
       setIsGenerating({ ...isGenerating, addLog: false });
     } else {
       await signUserIn();
@@ -204,7 +213,7 @@ function SnapLog({ userId, logs }) {
     const promptWithContext = createTalkToMePrompt(talkMessage.valueToTalkTo, formattedTalkMessage);
     const generatedQuestion = await getGeneration(promptWithContext);
     const questionToInsert = `<strong>${generatedQuestion.replace(/^\n+|\n+$/g, '').replace("<strong>", "").replace("</strong>").replace("*", "")}</strong>`;
-    setTalkMessage({ ...talkMessage, message: `${talkMessage.message.slice(0, -2)}\n${questionToInsert}\n` });
+    setTalkMessage({ ...talkMessage, message: `${talkMessage.message.slice(0, -2)}\n${questionToInsert}\n`.toLowerCase() });
     setIsGenerating({ ...isGenerating, talkGeneration: false });
   };
   const formatTalkMessage = (message) => {
@@ -287,6 +296,18 @@ function SnapLog({ userId, logs }) {
       await setUserCredentials();
     }
   }
+  const handleGenerateImage = async () => {
+    setIsGenerating({ ...isGenerating, image: true });
+    const message = replyMode ? replyMessage : logMessage;
+    if (message.length === 0) {
+      setAlerts([...alerts, { message: `you can not generate an image from an empty message`, type: `error` }]);
+      setIsGenerating({ ...isGenerating, image: false });
+      return;
+    }
+    const image = await generateImg('', message);
+    setGeneratedImage(image);
+    setIsGenerating({ ...isGenerating, image: false });
+  };
   const handleTalk = async (log, logs) => {
     if (currUserId) {
       if (talkMode) {
@@ -294,7 +315,7 @@ function SnapLog({ userId, logs }) {
         setTalkMessage({ valueToTalkTo: ``, message: `` });
       } else {
         setTalkMode(true);
-        setTalkMessage({ valueToTalkTo: getFullLogMessage(log, logs), message: `` });
+        setTalkMessage({ valueToTalkTo: getFullLogMessage(log, logs).toLowerCase(), message: searchMessage.toLowerCase() });
       }
     } else {
       await signUserIn();
@@ -357,6 +378,10 @@ function SnapLog({ userId, logs }) {
     }
   }, [currUserId])
   return (
+    <>
+    <div style={{ marginTop: "10px", marginLeft: "10px" }}>
+     <Link href="/instructions" style={{ color: "yellowgreen" }}><span>{" "}{" "}</span>read helpful instructions<span>{" "}{" "}</span></Link>
+     </div>
     <Root isSearching={isSearching}>
       <Head>
         <title>reinforce</title>
@@ -401,7 +426,10 @@ function SnapLog({ userId, logs }) {
             replyMode
             ?
               <>
-                <LittleButton onClickAction={() => setDrawMode(!drawMode)} isGenerating={false} mute={false}><MdOutlineDraw size="25px" /></LittleButton>
+                <LittleButton onClickAction={() => {
+                  setDrawMode(!drawMode)
+                  setGeneratedImage([])
+                }} isGenerating={false} mute={false}><MdOutlineDraw size="25px" /></LittleButton>
                 <LittleButton onClickAction={() => {
                   setMusicMode(!musicMode)
                   setMusicLink(``)
@@ -413,7 +441,10 @@ function SnapLog({ userId, logs }) {
               ? <Button onClickAction={handleSearch} isGenerating={isGenerating.searchLogs}>search</Button>
               : (
                   <>
-                    <LittleButton onClickAction={() => setDrawMode(!drawMode)} isGenerating={false} mute={false}><MdOutlineDraw size="25px" /></LittleButton>
+                    <LittleButton onClickAction={() => {
+                      setDrawMode(!drawMode)
+                      setGeneratedImage([])
+                    }} isGenerating={false} mute={false}><MdOutlineDraw size="25px" /></LittleButton>
                     <LittleButton onClickAction={() => {
                       setMusicMode(!musicMode)
                       setMusicLink(``)
@@ -439,21 +470,32 @@ function SnapLog({ userId, logs }) {
           }
           onChange={
             replyMode
-              ? (e) => setReplyMessage(`${e.target.value}`)
+              ? (e) => setReplyMessage(`${e.target.value}`.toLowerCase())
               : isSearching
-                ? (e) => setSearchMessage(`${e.target.value}`)
-                : (e) => setlogMessage(`${e.target.value}`)
+                ? (e) => setSearchMessage(`${e.target.value}`.toLowerCase())
+                : (e) => setlogMessage(`${e.target.value}`.toLowerCase())
           }
         >
           { drawMode && (
               <>
                 {/* <div style={{ height: "10px" }} /> */}
-                <Canvas
-                  userId={currUserId}
-                  logId={lastLogId}
-                  saveSelectedImage={addImageToLog}
-                  setAddImageToLog={setAddImageToLog}
-                />
+                {
+                  generatedImage[0]
+                  ? <img src={generatedImage[0]} style={{ width: "100%", height: "auto" }} />
+                  :
+                  <>
+                    <Canvas
+                      userId={currUserId}
+                      logId={lastLogId}
+                      saveSelectedImage={addImageToLog}
+                      setAddImageToLog={setAddImageToLog}
+                      setUpdatedLogs={() => {}}
+                      // setUpdatedLogs={setUpdatedLogs}
+                    />
+                    <Button onClickAction={handleGenerateImage} isGenerating={isGenerating.image}>or generate auto!</Button>
+                  </>
+
+                }
               </>
           )}
           { musicMode
@@ -526,16 +568,7 @@ function SnapLog({ userId, logs }) {
                         isSearching={isSearching}
                         imgURL={childLog.imgurl}
                         setTalkMessage={setTalkMessage}
-                        talkButton={(
-                          <Button
-                            onClickAction={() => {
-                              handleTalk(log, updatedLogs);
-                              setTalkMode(!talkMode);
-                            }}
-                            isGenerating={isGenerating.talkGeneration && talkMessage.valueToTalkTo.includes(childLog.message)}>
-                            talk
-                          </Button>
-                        )}
+                        talkButton={null}
                         talkMode={talkMode}
                         choseValueToTalkTo={talkMessage.valueToTalkTo}
                         replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}><RiReplyAllLine size="25px" /></LittleButton>}
@@ -623,16 +656,7 @@ function SnapLog({ userId, logs }) {
                         isSearching={isSearching}
                         imgURL={childLog.imgurl}
                         setTalkMessage={setTalkMessage}
-                        talkButton={(
-                          <Button
-                            onClickAction={() => {
-                              handleTalk(log, updatedLogs);
-                              setTalkMode(!talkMode);
-                            }}
-                            isGenerating={isGenerating.talkGeneration && talkMessage.valueToTalkTo.includes(childLog.message)}>
-                            talk
-                          </Button>
-                        )}
+                        talkButton={null}
                         talkMode={talkMode}
                         choseValueToTalkTo={talkMessage.valueToTalkTo}
                         replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}><RiReplyAllLine size="25px" /></LittleButton>}
@@ -671,6 +695,7 @@ function SnapLog({ userId, logs }) {
       </div>
     }
     </Root>
+  </>
   );
 }
 
