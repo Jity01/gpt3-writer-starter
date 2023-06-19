@@ -173,3 +173,13 @@ export const addMusicLinkToLog = async (userId: number, logId: number, musicURL:
     body: JSON.stringify({ userId, logId, musicURL }),
   });
 }
+
+export const editLogMessage = async (userId: number, logId: number, message: string) => {
+  await fetch(`${baseURL}/api/db/edit-log-message`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+    body: JSON.stringify({ userId, logId, message }),
+  });
+}

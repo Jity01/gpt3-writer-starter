@@ -6,6 +6,8 @@ import { HiMusicNote } from "react-icons/hi";
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { SlDislike } from "react-icons/sl";
 import { FcCancel } from "react-icons/fc";
+import { AiOutlineCheck } from "react-icons/ai";
+import { GiStarSkull } from "react-icons/gi";
 import Link from "next/link";
 import {
   addLog,
@@ -16,6 +18,7 @@ import {
   resetReplyLogId,
   addUser,
   addMusicLinkToLog,
+  editLogMessage,
 } from "../utils/client/db-helpers";
 import { signIn, getSession, signOut, useSession } from 'next-auth/react';
 import Button from "../components/button/button";
@@ -44,14 +47,14 @@ import Canvas from "../components/canvas/canvas";
 import Input from "../components/input/input";
 import Root from "../components/root/root";
 
-function SnapLog({ userId, logs }) {
+function Home({ userId, logs }) {
   const sortLogs = (logs) => {
     return logs.slice(0).sort((a, b) => {
       return a.created_at < b.created_at ? 1 : -1;
     });
   };
   const [logMessage, setlogMessage] = useState(``);
-  const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: { id: -1, isDeleting: false }, searchLogs: false, dislikeSearch: false, talkGeneration: false, image: false });
+  const [isGenerating, setIsGenerating] = useState({ addLog: false, deleteLog: { id: -1, isDeleting: false }, searchLogs: false, dislikeSearch: false, talkGeneration: false, image: false, editLog: false });
   const [updatedLogs, setUpdatedLogs] = useState(!logs ? [] : sortLogs([...logs]));
   const [replyMode, setReplyMode] = useState(false);
   const [replyMessage, setReplyMessage] = useState(``);
@@ -71,6 +74,9 @@ function SnapLog({ userId, logs }) {
   const [musicMode, setMusicMode] = useState(false);
   const [musicLink, setMusicLink] = useState(``);
   const [generatedImage, setGeneratedImage] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+  const [editMessage, setEditMessage] = useState(``);
+  const [editLogId, setEditLogId] = useState(-1);
   const logBoxRef: any = useRef(null)
   const replyRef: any = useRef(null)
   const executeScroll = (ref) => ref.current?.scrollIntoView();
@@ -100,9 +106,7 @@ function SnapLog({ userId, logs }) {
         const newLogId = await addLog(logMessage, userId, false, generatedImage.length !== 0 ? generatedImage[0] : '');
         setLastLogId(newLogId);
         const newLogs = await getLogsByUserId(userId);
-        setUpdatedLogs(newLogs.slice(0).sort((a, b) => {
-          return a.created_at < b.created_at ? 1 : -1;
-        }));
+        setUpdatedLogs(sortLogs(newLogs));
         setlogMessage(``);
         setAddImageToLog(true);
         setMusicMode(false);
@@ -300,7 +304,7 @@ function SnapLog({ userId, logs }) {
     setIsGenerating({ ...isGenerating, image: true });
     const message = replyMode ? replyMessage : logMessage;
     if (message.length === 0) {
-      setAlerts([...alerts, { message: `you can not generate an image from an empty message`, type: `error` }]);
+      setAlerts([...alerts, { message: `you can not generate from an empty message`, type: `error` }]);
       setIsGenerating({ ...isGenerating, image: false });
       return;
     }
@@ -339,6 +343,24 @@ function SnapLog({ userId, logs }) {
     newMatches.push(matchDisliked);
     setRawMatches(newMatches);
     setMatches(newMatches.map((m) => updatedLogs?.find((log) => log.message === m.metadata.logMessage)));
+  };
+  const handleEdit = async () => {
+    if (currUserId) {
+      if (editMode) {
+        if (editMessage.length > 0) {
+          setIsGenerating({ ...isGenerating, editLog: true });
+          await editLogMessage(currUserId, editLogId, editMessage);
+          setIsGenerating({ ...isGenerating, editLog: false });
+          const newLogs = await getLogsByUserId(currUserId);
+          setUpdatedLogs(sortLogs(newLogs));
+        } else {
+          setAlerts([...alerts, { message: `you can not edit a log to be empty`, type: `error` }]);
+        }
+      }
+    } else {
+      await signUserIn();
+      await setUserCredentials();
+    }
   };
   useEffect(() => {
     if (!replyMode) {
@@ -520,6 +542,35 @@ function SnapLog({ userId, logs }) {
                     key={log.id + 99}
                     isSearching={isSearching}
                     talkMessage={talkMessage}
+                    editButton={(
+                      !editMode ? <LittleButton
+                        onClickAction={() => {
+                          setEditMessage(log.message);
+                          setEditLogId(log.id);
+                          setEditMode(!editMode);
+                        }}
+                        isGenerating={false}
+                        mute={false}
+                      >
+                        <GiStarSkull size="34px" />
+                      </LittleButton>
+                      : <LittleButton
+                        onClickAction={() => {
+                          handleEdit();
+                          setEditMessage(``);
+                          setEditLogId(-1);
+                          setEditMode(!editMode);
+                        }}
+                        isGenerating={isGenerating.editLog}
+                        mute={false}
+                      >
+                        <AiOutlineCheck size="34px" />
+                      </LittleButton>
+                    )}
+                    editMode={editMode}
+                    setEditMessage={setEditMessage}
+                    editMessage={editMessage}
+                    editLogId={editLogId}
                     setTalkMessage={setTalkMessage}
                     imgURL={log.imgurl}
                     talkButton={(
@@ -535,7 +586,7 @@ function SnapLog({ userId, logs }) {
                     )}
                     talkMode={talkMode}
                     logMark="log"
-                    replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}><RiReplyAllLine size="25px" /></LittleButton>}
+                    replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}><RiReplyAllLine size="35px" /></LittleButton>}
                     deleteButton={(
                       <LittleButton
                         onClickAction={() => handleDelete(log.id)}
@@ -544,7 +595,7 @@ function SnapLog({ userId, logs }) {
                         }
                         mute={false}
                       >
-                        <RiDeleteBinLine size="25px" />
+                        <RiDeleteBinLine size="34px" />
                       </LittleButton>
                     )}
                     numOfLogs={getParentMatches(updatedLogs).length - (logIdx)}
@@ -554,6 +605,7 @@ function SnapLog({ userId, logs }) {
                     reply_log_id={log.reply_log_id}
                     choseValueToTalkTo={talkMessage.valueToTalkTo}
                     dislikeButton={null}
+                    logId={log.id}
                 />
               </div>
               <div key={log.id + 1}>
@@ -567,18 +619,48 @@ function SnapLog({ userId, logs }) {
                         talkMessage={talkMessage}
                         isSearching={isSearching}
                         imgURL={childLog.imgurl}
+                        logId={childLog.id}
                         setTalkMessage={setTalkMessage}
                         talkButton={null}
                         talkMode={talkMode}
+                        editMessage={editMessage}
+                        editButton={(
+                          !editMode ? <LittleButton
+                            onClickAction={() => {
+                              setEditMessage(log.message);
+                              setEditLogId(log.id);
+                              setEditMode(!editMode);
+                            }}
+                            isGenerating={false}
+                            mute={false}
+                          >
+                            <GiStarSkull size="34px" />
+                          </LittleButton>
+                          : <LittleButton
+                            onClickAction={() => {
+                              setEditMessage(``);
+                              setEditLogId(-1);
+                              setEditMode(!editMode);
+                              handleEdit();
+                            }}
+                            isGenerating={isGenerating.editLog}
+                            mute={false}
+                          >
+                            <AiOutlineCheck size="34px" />
+                          </LittleButton>
+                        )}
+                        editMode={editMode}
+                        setEditMessage={setEditMessage}
+                        editLogId={editLogId}
                         choseValueToTalkTo={talkMessage.valueToTalkTo}
-                        replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}><RiReplyAllLine size="25px" /></LittleButton>}
+                        replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}><RiReplyAllLine size="35px" /></LittleButton>}
                         deleteButton={(
                           <LittleButton
                             onClickAction={() => handleDelete(childLog.id)}
                             isGenerating={isGenerating.deleteLog.id === childLog.id && isGenerating.deleteLog.isDeleting}
                             mute={false}
                           >
-                            <RiDeleteBinLine size="25px"/>
+                            <RiDeleteBinLine size="34px"/>
                           </LittleButton>
                         )}
                         logMark={"log"}
@@ -606,6 +688,8 @@ function SnapLog({ userId, logs }) {
                       musicLink={log.music_url}
                       talkMessage={talkMessage}
                       imgURL={log.imgurl}
+                      logId={log.id}
+                      editMessage={editMessage}
                       setTalkMessage={setTalkMessage}
                       talkButton={(
                         <Button
@@ -619,16 +703,44 @@ function SnapLog({ userId, logs }) {
                       )}
                       talkMode={talkMode}
                       choseValueToTalkTo={talkMessage.valueToTalkTo}
-                      replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}><RiReplyAllLine size="25px" /></LittleButton>}
+                      replyButton={<LittleButton onClickAction={() => openReply(log.id)} isGenerating={false} mute={log.reply_log_id}><RiReplyAllLine size="35px" /></LittleButton>}
                       deleteButton={(
                         <LittleButton
                           onClickAction={() => handleDelete(log.id)}
                           isGenerating={isGenerating.deleteLog.id === log.id && isGenerating.deleteLog.isDeleting}
                           mute={false}
                         >
-                          <RiDeleteBinLine size="25px" />
+                          <RiDeleteBinLine size="34px" />
                         </LittleButton>
                       )}
+                      editButton={(
+                        !editMode ? <LittleButton
+                          onClickAction={() => {
+                            setEditMessage(log.message);
+                            setEditLogId(log.id);
+                            setEditMode(!editMode);
+                          }}
+                          isGenerating={false}
+                          mute={false}
+                        >
+                          <GiStarSkull size="34px" />
+                        </LittleButton>
+                        : <LittleButton
+                          onClickAction={() => {
+                            setEditMessage(``);
+                            setEditLogId(-1);
+                            setEditMode(!editMode);
+                            handleEdit();
+                          }}
+                          isGenerating={isGenerating.editLog}
+                          mute={false}
+                        >
+                          <AiOutlineCheck size="34px" />
+                        </LittleButton>
+                      )}
+                      editMode={editMode}
+                      setEditMessage={setEditMessage}
+                      editLogId={editLogId}
                       numOfLogs={logIdx + 1}
                       message={log.message}
                       createdAt={log.created_at}
@@ -641,7 +753,7 @@ function SnapLog({ userId, logs }) {
                           isGenerating={isGenerating.dislikeSearch}
                           mute={false}
                         >
-                          <SlDislike size="25px" />
+                          <SlDislike size="34px" />
                         </LittleButton>
                       )} />
                     <div key={log.id + 1}>
@@ -651,22 +763,52 @@ function SnapLog({ userId, logs }) {
                       && <Log
                         replyRef={idOfLogToReplyTo === childLog.id ? replyRef : null}
                         key={childLog.id}
+                        logId={childLog.id}
                         talkMessage={talkMessage}
                         musicLink={childLog.music_url}
                         isSearching={isSearching}
                         imgURL={childLog.imgurl}
+                        editMessage={editMessage}
                         setTalkMessage={setTalkMessage}
                         talkButton={null}
+                        editButton={(
+                          !editMode ? <LittleButton
+                            onClickAction={() => {
+                              setEditMessage(log.message);
+                              setEditLogId(log.id);
+                              setEditMode(!editMode);
+                            }}
+                            isGenerating={false}
+                            mute={false}
+                          >
+                            <GiStarSkull size="34px" />
+                          </LittleButton>
+                          : <LittleButton
+                            onClickAction={() => {
+                              setEditMessage(``);
+                              setEditLogId(-1);
+                              setEditMode(!editMode);
+                              handleEdit();
+                            }}
+                            isGenerating={isGenerating.editLog}
+                            mute={false}
+                          >
+                            <AiOutlineCheck size="34px" />
+                          </LittleButton>
+                        )}
+                        editMode={editMode}
+                        setEditMessage={setEditMessage}
+                        editLogId={editLogId}
                         talkMode={talkMode}
                         choseValueToTalkTo={talkMessage.valueToTalkTo}
-                        replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}><RiReplyAllLine size="25px" /></LittleButton>}
+                        replyButton={<LittleButton onClickAction={() => openReply(childLog.id)} isGenerating={false} mute={childLog.reply_log_id}><RiReplyAllLine size="35px" /></LittleButton>}
                         deleteButton={(
                           <LittleButton
                             onClickAction={() => handleDelete(childLog.id)}
                             isGenerating={isGenerating.deleteLog.id === childLog.id && isGenerating.deleteLog.isDeleting}
                             mute={false}
                           >
-                            <RiDeleteBinLine size="25px" />
+                            <RiDeleteBinLine size="34px" />
                           </LittleButton>
                         )}
                         logMark={"match"}
@@ -714,4 +856,4 @@ export async function getServerSideProps(context) {
   return { props: { session, userId, logs } };
 }
 
-export default SnapLog;
+export default Home;

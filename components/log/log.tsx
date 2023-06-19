@@ -3,7 +3,32 @@ import months from '../../utils/constants/months.json';
 import React, { useState } from 'react';
 import { BsPlay } from 'react-icons/bs';
 
-function Log({ musicLink, replyRef, isSearching, imgURL, logMark, talkMessage, setTalkMessage, choseValueToTalkTo, talkMode, replyButton, deleteButton, talkButton, reply_log_id, numOfLogs, message, createdAt, isReply, dislikeButton }) {
+function Log({
+  musicLink,
+  replyRef,
+  isSearching,
+  imgURL,
+  logMark,
+  talkMessage,
+  setTalkMessage,
+  choseValueToTalkTo,
+  talkMode,
+  replyButton,
+  deleteButton,
+  talkButton,
+  reply_log_id,
+  numOfLogs,
+  message,
+  createdAt,
+  isReply,
+  dislikeButton,
+  editButton,
+  editMode,
+  editMessage,
+  setEditMessage,
+  editLogId,
+  logId,
+}) {
   const [isPlaying, setIsPlaying] = useState(false);
   const formateDate = (date) => {
     const year = date.substring(0, 4);
@@ -50,45 +75,94 @@ function Log({ musicLink, replyRef, isSearching, imgURL, logMark, talkMessage, s
   return (
     <div ref={replyRef} className={generateContainerClass()}>
       { musicLink && <BsPlay size="45px" className={generatePlayButtonClass()} onClick={() => setIsPlaying(!isPlaying)} /> }
-      { talkMode && choseValueToTalkTo.includes(message) ? (
+      { talkMode && choseValueToTalkTo.includes(message.toLowerCase()) && !isReply ? (
         <>
+          <div className={`${styles.singularButton} ${styles.buttonContainer}`}>
+            { talkButton }
+          </div>
           <textarea
             className={styles.textarea}
             style={isReply ? window.innerWidth < 600 ? { minWidth: "190px", maxWidth: "190px" } : { minWidth: "221px", maxWidth: "221px" } : {}}
             value={formatValue(talkMessage.message)}
             onChange={(e) => setTalkMessage({ ...talkMessage, message: e.target.value.toLowerCase() })}
+            placeholder='talk to me :)'
           />
-          <div className={`${styles.singularButton} ${styles.buttonContainer}`}>
-            { talkButton }
-          </div>
         </>
-      ) :
-      <>
-        <div className={styles.buttonContainer}>
-          { replyButton }
-          { deleteButton }
-          { dislikeButton }
-        </div>
-        { isPlaying && musicLink &&
-          <>
-            <br />
-            <iframe
-              height={"300"}
-              src={musicLink}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              frameBorder="0"
-            />
-          </> }
-        <div>
-          { formatMessage(message).map(messageDiv => messageDiv) }
-        </div>
-        { imgURL && <img src={imgURL} alt={`generated img for log with message of ${message}`} /> } 
-        <div className={styles.subInfo}>
-          <p>🪵 {logMark} #{numOfLogs}</p>
-          <p>⏳ created at: {formateDate(createdAt)}</p>
-          { talkButton }
-        </div>
-      </>
+      ) : talkMode && choseValueToTalkTo.includes(message.toLowerCase()) && isReply
+            ? null
+            : editMode && editLogId === logId
+              ? (
+                <>
+                  { talkButton }
+                  <div className={styles.subInfo}>
+                    <p>🪵 {logMark} #{numOfLogs}</p>
+                    <p>⏳ created at: {formateDate(createdAt)}</p>
+                    <hr />
+                  </div>
+                  { isPlaying && musicLink &&
+                    <>
+                      <br />
+                      <iframe
+                        height={"300"}
+                        src={musicLink}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        frameBorder="0"
+                      />
+                    </> }
+                  <div>
+                    <textarea
+                      className={styles.textarea}
+                      style={isReply ? window.innerWidth < 600 ? { minWidth: "190px", maxWidth: "190px" } : { minWidth: "221px", maxWidth: "221px" } : {}}
+                      value={editMessage}
+                      onChange={(e) => setEditMessage(e.target.value.toLowerCase())}
+                      placeholder='edit me :)'
+                    />
+                  </div>
+                  { imgURL && <img src={imgURL} alt={`generated img for log with message of ${message}`} /> }
+                  <div>
+                    <hr />
+                  </div>
+                  <div className={styles.buttonContainer}>
+                    { replyButton }
+                    { editButton }
+                    { deleteButton }
+                    { dislikeButton }
+                  </div>
+                </>
+              )
+              : (
+                <>
+                  { talkButton }
+                  <div className={styles.subInfo}>
+                    <p>🪵 {logMark} #{numOfLogs}</p>
+                    <p>⏳ created at: {formateDate(createdAt)}</p>
+                    <hr />
+                  </div>
+                  { isPlaying && musicLink &&
+                    <>
+                      <br />
+                      <iframe
+                        height={"300"}
+                        src={musicLink}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        frameBorder="0"
+                      />
+                    </> }
+                  <div>
+                    { formatMessage(message).map(messageDiv => messageDiv) }
+                  </div>
+                  { imgURL && <img src={imgURL} alt={`generated img for log with message of ${message}`} /> }
+                  <div>
+                    <hr />
+                  </div>
+                  <div className={styles.buttonContainer}>
+                    { replyButton }
+                    { editButton }
+                    { deleteButton }
+                    { dislikeButton }
+                  </div>
+                </>
+              )
     }
     </div>
   );
