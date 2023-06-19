@@ -24,8 +24,8 @@ function Instructions() {
           <p>&quot;michael said a lot of ideas that you have might actually be really stupid - ineffective AND distracting. that might be something you wanna consider before attaching yourself too heavily to any one of them.&quot;</p>
         </Example>
         <br />
-        <li>whenever you have problems, hit the glowing blue button to turn on search mode - this allows you to search through your thoughts to get assistance from your past wisdom when you need it</li>
-        <p style={{ color: "hsl(174, 69%, 40%)"}}>💡tip: as you&apos;re searching, hit &quot;return/enter&quot; three times to get questions that&apos;ll help you express your emotions better</p>
+        <li>whenever you have problems, hit the glowing blue button to turn on search mode - this allows you to search through your thoughts to get assistance from your past writings</li>
+        <p style={{ color: "hsl(174, 69%, 40%)"}}>💡tip: as you&apos;re searching, hit &quot;return&quot; three times to get questions that&apos;ll help you express your emotions better</p>
         <br />
         <Example>
           <p>i searched about being unusually distracted and this was one of the logs that came up - funny but effective!</p>
