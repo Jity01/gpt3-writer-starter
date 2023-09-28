@@ -7,8 +7,7 @@ export const queryFeedbackVectorDB = async (userId: number, inputVector: Array<n
     apiKey: process.env.PINECONE_FEEDBACK_API_KEY as string,
   });
 
-  const pineconeIndex = pinecone.Index('feedback');
-
+  const pineconeIndex = pinecone.Index('feedback-index');
   let pineconeResult = await pineconeIndex.query({
     queryRequest: {
       vector: inputVector,
